@@ -8,7 +8,7 @@ namespace Nmpq.Parsing {
 				return Magic[0] == (byte) 'M'
 					&& Magic[1] == (byte) 'P'
 					&& Magic[2] == (byte) 'Q'
-					&& Magic[3] == 0x1a;
+					&& Magic[3] == 0x1a; // docs say this is supposed to be 0x1a, but my tests are showing 0x1b?
 			}
 		}
 
