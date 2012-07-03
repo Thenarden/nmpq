@@ -1,9 +1,29 @@
+using System;
+
 namespace Nmpq.Parsing {
-	public static class Hashing {
+	public static class Crypto {
 		private static readonly ulong[] CryptTable = new ulong[0x500];
 
-		static Hashing() {
+		static Crypto() {
 			InitializeCryptTable();
+		}
+
+		public static void DecryptInPlace(byte[] data, ulong key) {
+			if (data == null) throw new ArgumentNullException("data");
+
+			ulong seed = 0xEEEEEEEEL;
+
+			for(var i = 0; i < data.Length; i += sizeof(ulong)) {
+				var current = BitConverter.ToUInt64(data, i);
+				seed += CryptTable[0x400 + (key & 0xff)];
+
+				var decrypted = current ^ (key + seed);
+				var bytes = BitConverter.GetBytes(decrypted);
+				Array.ConstrainedCopy(bytes, 0, data, i, sizeof(ulong));
+
+				key = ((~key << 0x15) + 0x11111111) | (key >> 0x0b);
+				seed = current + seed + (seed << 5) + 3;
+			}
 		}
 
 		public static ulong Hash(string str, HashType hashType) {
@@ -19,7 +39,6 @@ namespace Nmpq.Parsing {
 			return seed1;
 		}
 
-		// The encryption and hashing functions use a number table in their procedures. This table must be initialized before the functions are called the first time.
 		private static void InitializeCryptTable() {
 			ulong seed = 0x00100001;
 
