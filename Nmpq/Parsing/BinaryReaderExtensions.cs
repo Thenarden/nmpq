@@ -18,5 +18,12 @@ namespace Nmpq.Parsing {
 
 			return structure;
 		}
+
+		public static void SkipBytes(this BinaryReader reader, int count) {
+			if (reader == null) throw new ArgumentNullException("reader");
+
+			for (var i = 0; i < count; i++)
+				reader.ReadByte();
+		}
 	}
 }
