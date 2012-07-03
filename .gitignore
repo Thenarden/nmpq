@@ -1,6 +1,10 @@
 # Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
 bin
 obj
+*.suo
+*.user
+SymbolCache.bin
 
 # mstest test results
 TestResults
+_Resharper.*
