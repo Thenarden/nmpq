@@ -3,12 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nmpq", "Nmpq\Nmpq.csproj", "{849EC213-E069-4DBF-982C-0DE82249C049}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nmpq.Tests", "Nmpq.Tests\Nmpq.Tests.csproj", "{55CE5737-5F69-41E1-99FC-4CE1CC20784E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{55CE5737-5F69-41E1-99FC-4CE1CC20784E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55CE5737-5F69-41E1-99FC-4CE1CC20784E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55CE5737-5F69-41E1-99FC-4CE1CC20784E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55CE5737-5F69-41E1-99FC-4CE1CC20784E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{849EC213-E069-4DBF-982C-0DE82249C049}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{849EC213-E069-4DBF-982C-0DE82249C049}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{849EC213-E069-4DBF-982C-0DE82249C049}.Release|Any CPU.ActiveCfg = Release|Any CPU
