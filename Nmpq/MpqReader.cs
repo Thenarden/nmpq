@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Nmpq.Parsing;
@@ -27,25 +28,32 @@ namespace Nmpq {
 			if (archive == null) throw new ArgumentNullException("archive");
 
 			using(var reader = new BinaryReader(archive, Encoding.ASCII)) {
-				ReadMagicAndSkipToArchiveHeader(reader);
+				var archiveOffset = ValidateMagicAndGetArhiveOffset(reader);
 
 				var header = reader.ReadStruct<MpqHeader>();
 				ValidateHeader(header);
 
-				return new MpqArchive { Header = header };
+				var hashTableEntries = ReadTableEntires<HashTableEntry>(reader, "hash", archiveOffset + header.HashTableOffset, header.HashTableEntires);
+				var blockTableEntries = ReadTableEntires<BlockTableEntry>(reader, "block", archiveOffset + header.BlockTableOffset, header.BlockTableEntries);
+
+				return new MpqArchive {
+					Header = header,
+					BlockTable = new BlockTable(blockTableEntries.ToArray()),
+					HashTable = new HashTable(hashTableEntries.ToArray()),
+				};
 			}
 		}
 
-		private void ReadMagicAndSkipToArchiveHeader(BinaryReader reader) {
+		private int ValidateMagicAndGetArhiveOffset(BinaryReader reader) {
 			var magicString = new string(reader.ReadChars(3));
 			var userDataIndicator = reader.ReadByte();
 			
-			if (magicString != "MPQ" || (userDataIndicator != 0x1a && userDataIndicator != 0x1b))
+			if (magicString != "MPQ") 
 				throw new Exception("Invalid MPQ header. This is probably not an MPQ archive. (Invalid magic)");
 
 			// 0x1a as the last byte of the magic number indicates that there is no user data section
 			if (userDataIndicator == 0x1a)
-				return;
+				return 0;
 
 			// 0x1b as the last byte of the magic number indicates that there IS a user data section
 			//	we have to skip over it to get to the archive header
@@ -53,9 +61,10 @@ namespace Nmpq {
 				var userDataSize = reader.ReadInt32();	// don't care about this
 				var archiveOffset = reader.ReadInt32();
 
-				// todo: consider whether it is worth rewriting this to handle un-seekable streams
-				reader.BaseStream.Seek(archiveOffset, SeekOrigin.Begin);
+				return archiveOffset;
 			}
+
+			throw new Exception("Invalid MPQ header. This is probably not an MPQ archive. (Invalid user data indicator)");
 		}
 
 		private static void ValidateHeader(MpqHeader header) {
@@ -80,18 +89,20 @@ namespace Nmpq {
 					: fileKey;
 		}
 
-		private static IEnumerable<BlockTableEntry> ReadBlockTable(BinaryReader reader, int numberOfEntries) {
-			var size = Marshal.SizeOf(typeof (BlockTableEntry));
+		private static IEnumerable<T> ReadTableEntires<T>(BinaryReader reader, string name, int offset, int numberOfEntries) {
+			reader.BaseStream.Seek(offset, SeekOrigin.Begin);
 
-			var bytes = reader.ReadBytes(size * numberOfEntries);
-			var key = Crypto.Hash("(block table)", HashType.TableOffset);
-			Crypto.DecryptInPlace(bytes, key);
+			var size = Marshal.SizeOf(typeof(T));
+			var data = reader.ReadBytes(size * numberOfEntries);
+			var key = Crypto.Hash("(" + name + " table)", HashType.TableOffset);
 
-			using(var memoryStream = new MemoryStream(bytes)) 
-			using(var tableReader = new BinaryReader(memoryStream)) {
+			Crypto.DecryptInPlace(data, key);
+
+			using (var memoryStream = new MemoryStream(data))
+			using (var tableReader = new BinaryReader(memoryStream)) {
 				while (tableReader.BaseStream.Position != tableReader.BaseStream.Length)
-					yield return tableReader.ReadStruct<BlockTableEntry>();
+					yield return tableReader.ReadStruct<T>();
 			}
-		}
+		} 
 	}
 }

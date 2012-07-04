@@ -42,6 +42,13 @@
     <Compile Include="MpqArchive.cs" />
     <Compile Include="MpqReader.cs" />
     <Compile Include="Parsing\BinaryReaderExtensions.cs" />
+    <Compile Include="Parsing\BlockFlags.cs" />
+    <Compile Include="BlockTable.cs" />
+    <Compile Include="Parsing\BlockTableEntry.cs" />
+    <Compile Include="Parsing\Crypto.cs" />
+    <Compile Include="HashTable.cs" />
+    <Compile Include="Parsing\HashTableEntry.cs" />
+    <Compile Include="Parsing\HashType.cs" />
     <Compile Include="Parsing\MpqHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
