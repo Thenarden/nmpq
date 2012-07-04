@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CleanupTests.cs" />
+    <Compile Include="CryptoTests.cs" />
     <Compile Include="FileTests.cs" />
     <Compile Include="HeaderParsingTests.cs" />
     <Compile Include="HeaderTests.cs" />

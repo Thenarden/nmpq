@@ -19,5 +19,11 @@ namespace Nmpq.Parsing {
 
 		[FieldOffset(0x0c)]
 		public int FileBlockIndex;
+
+		private const uint EmptyMarker = 0xffffffff;
+
+		public bool IsEmpty {
+			get { return FilePathHashA == EmptyMarker && FilePathHashB == EmptyMarker; }
+		}
 	}
 }
