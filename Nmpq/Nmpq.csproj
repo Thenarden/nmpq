@@ -40,7 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MpqArchive.cs" />
-    <Compile Include="MpqReader.cs" />
     <Compile Include="Parsing\BinaryReaderExtensions.cs" />
     <Compile Include="Parsing\BlockFlags.cs" />
     <Compile Include="BlockTable.cs" />
