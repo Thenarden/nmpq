@@ -39,10 +39,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMpqArchive.cs" />
     <Compile Include="MpqArchive.cs" />
     <Compile Include="Parsing\BinaryReaderExtensions.cs" />
     <Compile Include="Parsing\BlockFlags.cs" />
-    <Compile Include="BlockTable.cs" />
     <Compile Include="Parsing\BlockTableEntry.cs" />
     <Compile Include="Parsing\Crypto.cs" />
     <Compile Include="HashTable.cs" />

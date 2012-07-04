@@ -11,5 +11,17 @@ namespace Nmpq.Parsing {
 		public bool HasKeyAdjustedByBlockOffset {
 			get { return (Flags & BlockFlags.KeyIsAdjustedByBlockOffset) != 0;  }
 		}
+
+		public bool IsFile {
+			get { return (Flags & BlockFlags.IsFile) != 0; }
+		}
+
+		public bool IsFileSingleUnit {
+			get { return (Flags & BlockFlags.FileIsSingleUnit) != 0; }
+		}
+
+		public bool IsCompressed {
+			get { return (Flags & BlockFlags.FileIsCompressed) != 0; }
+		}
 	}
 }

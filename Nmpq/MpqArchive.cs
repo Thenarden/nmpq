@@ -7,7 +7,7 @@ using System.Text;
 using Nmpq.Parsing;
 
 namespace Nmpq {
-	public class MpqArchive : IDisposable {
+	public class MpqArchive : IMpqArchive, IDisposable {
 		private BinaryReader _reader;
 		private bool _cleanupStreamOnDispose;
 
@@ -15,7 +15,7 @@ namespace Nmpq {
 		public int UserDataSize { get; set; }
 		public MpqHeader Header { get; set; }
 		public HashTable HashTable { get; set; }
-		public BlockTable BlockTable { get; set; }
+		public IList<BlockTableEntry> BlockTable { get; set; }
 
 		protected MpqArchive() {
 		}
@@ -51,10 +51,10 @@ namespace Nmpq {
 			ReadUserDataHeader();
 			ReadAndValidateArchiveHeader();
 
-			var hashTableEntries = ReadTableEntires<HashTableEntry>("(hash table)", Header.HashTableOffset, Header.HashTableEntires);
-			var blockTableEntries = ReadTableEntires<BlockTableEntry>("(block table)", Header.BlockTableOffset, Header.BlockTableEntries);
+			var hashTableEntries = ReadTableEntires<HashTableEntry>("(hash table)", Header.HashTableOffset, Header.HashTableEntryCount);
+			var blockTableEntries = ReadTableEntires<BlockTableEntry>("(block table)", Header.BlockTableOffset, Header.BlockTableEntryCount);
 
-			BlockTable = new BlockTable(blockTableEntries.ToArray());
+			BlockTable = blockTableEntries.ToList();
 			HashTable = new HashTable(hashTableEntries.ToArray());
 		}
 
@@ -133,6 +133,37 @@ namespace Nmpq {
 					_reader = null;
 				}
 			}
+		}
+
+		// todos: decompression, multi-block files
+		public byte[] OpenFile(string path) {
+			if (path == null) throw new ArgumentNullException("path");
+
+			var hashA = Crypto.Hash(path, HashType.FilePathA);
+			var hashB = Crypto.Hash(path, HashType.FilePathB);
+
+			var entry = HashTable.FindEntry(hashA, hashB);
+
+			if (entry == null)
+				return null;
+
+			var blockEntry = BlockTable[entry.Value.FileBlockIndex];
+
+			if (!blockEntry.IsFile)
+				return null;
+
+			Seek(blockEntry.BlockOffset);
+
+			var data = _reader.ReadBytes(blockEntry.BlockSize);
+
+			if (blockEntry.IsFileSingleUnit) {
+				if (blockEntry.IsCompressed)
+					return null;
+
+				return data;
+			}
+
+			return null;
 		}
 	}
 }

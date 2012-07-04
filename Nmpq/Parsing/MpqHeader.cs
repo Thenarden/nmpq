@@ -1,14 +1,15 @@
+using System;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Nmpq.Parsing {
-	[StructLayout(LayoutKind.Sequential, Pack = 1)]
+	[StructLayout(LayoutKind.Explicit, Pack = 1)]
 	public struct MpqHeader {
 		public bool IsMagicValid {
 			get {
-				return Magic[0] == (byte) 'M'
-					&& Magic[1] == (byte) 'P'
-					&& Magic[2] == (byte) 'Q'
-					&& Magic[3] == 0x1a; // docs say this is supposed to be 0x1a, but my tests are showing 0x1b?
+				var bytes = BitConverter.GetBytes(Magic);
+				var mpq = Encoding.ASCII.GetString(bytes, 0, 3);
+				return mpq == "MPQ" && bytes[3] == 0x1a;
 			}
 		}
 
@@ -16,20 +17,40 @@ namespace Nmpq.Parsing {
 			get { return FormatVersion == 1; }
 		}
 
-		[MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-		public byte[] Magic;
+		[FieldOffset(0x00)]
+		public int Magic;
 
+		[FieldOffset(0x04)]
 		public int HeaderSize;
-		public int ArchiveSize;
-		public short FormatVersion;
-		public byte SectorSizeShift;
-		public int HashTableOffset;
-		public int BlockTableOffset;
-		public int HashTableEntires;
-		public int BlockTableEntries;
 
+		[FieldOffset(0x08)]
+		public int ArchiveSize;
+
+		[FieldOffset(0x0c)]
+		public short FormatVersion;
+
+		[FieldOffset(0x0e)]
+		public byte SectorSizeShift;
+
+		[FieldOffset(0x10)]
+		public int HashTableOffset;
+
+		[FieldOffset(0x14)]
+		public int BlockTableOffset;
+
+		[FieldOffset(0x18)]
+		public int HashTableEntryCount;
+
+		[FieldOffset(0x1c)]
+		public int BlockTableEntryCount;
+
+		[FieldOffset(0x20)]
 		public long ExtendedBlockTableOffset;
+
+		[FieldOffset(0x28)]
 		public short HashTableOffsetHigh;
+
+		[FieldOffset(0x2a)]
 		public short BlockTableOffsetHigh;
 	}
 }
