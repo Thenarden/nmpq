@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using Nmpq.Parsing;
 
@@ -65,6 +67,31 @@ namespace Nmpq {
 
 			if (header.HeaderSize != 0x2c)
 				throw new Exception("Unexpected header size for specified MPQ format.");
+		}
+		
+		private static ulong ComputeFileKey(string path, BlockTableEntry blockTableEntry, ulong archiveOffset) {
+			if (path == null) throw new ArgumentNullException("path");
+
+			var filename = Path.GetFileName(path); // is this kosher? do MPQ paths have the same syntax and semantics as system paths?
+			var fileKey = Crypto.Hash(filename, HashType.FileKey);
+
+			return blockTableEntry.HasKeyAdjustedByBlockOffset
+					? (fileKey + (ulong)blockTableEntry.BlockOffset) ^ (ulong)blockTableEntry.FileSize
+					: fileKey;
+		}
+
+		private static IEnumerable<BlockTableEntry> ReadBlockTable(BinaryReader reader, int numberOfEntries) {
+			var size = Marshal.SizeOf(typeof (BlockTableEntry));
+
+			var bytes = reader.ReadBytes(size * numberOfEntries);
+			var key = Crypto.Hash("(block table)", HashType.TableOffset);
+			Crypto.DecryptInPlace(bytes, key);
+
+			using(var memoryStream = new MemoryStream(bytes)) 
+			using(var tableReader = new BinaryReader(memoryStream)) {
+				while (tableReader.BaseStream.Position != tableReader.BaseStream.Length)
+					yield return tableReader.ReadStruct<BlockTableEntry>();
+			}
 		}
 	}
 }

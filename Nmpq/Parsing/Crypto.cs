@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Nmpq.Parsing {
 	public static class Crypto {
