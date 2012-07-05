@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Nmpq.Parsing {
 	public static class Crypto {
@@ -8,21 +9,21 @@ namespace Nmpq.Parsing {
 			InitializeCryptTable();
 		}
 
-		public static void DecryptInPlace(byte[] data, ulong key) {
+		public static void DecryptInPlace(byte[] data, uint seed1) {
 			if (data == null) throw new ArgumentNullException("data");
 
-			ulong seed = 0xEEEEEEEEL;
+			uint seed2 = 0xEEEEEEEE;
 
-			for(var i = 0; i < data.Length; i += sizeof(ulong)) {
-				var current = BitConverter.ToUInt64(data, i);
-				seed += CryptTable[0x400 + (key & 0xff)];
+			for (var i = 0; i < data.Length; i += sizeof(uint)) {
+				var value = BitConverter.ToUInt32(data, i);
 
-				var decrypted = current ^ (key + seed);
-				var bytes = BitConverter.GetBytes(decrypted);
-				Array.ConstrainedCopy(bytes, 0, data, i, sizeof(ulong));
+				seed2 += CryptTable[0x400 + (seed1 & 0xff)];
+				value = value ^ (seed1 + seed2);
+				seed1 = ((~seed1 << 0x15) + 0x11111111) | (seed1 >> 0x0b);
+				seed2 = value + seed2 + (seed2 << 5) + 3;
 
-				key = ((~key << 0x15) + 0x11111111) | (key >> 0x0b);
-				seed = current + seed + (seed << 5) + 3;
+				var bytes = BitConverter.GetBytes(value);
+				Array.ConstrainedCopy(bytes, 0, data, i, sizeof(uint));
 			}
 		}
 

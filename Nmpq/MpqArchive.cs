@@ -15,7 +15,7 @@ namespace Nmpq {
 		public int UserDataSize { get; set; }
 		public MpqHeader Header { get; set; }
 		public HashTable HashTable { get; set; }
-		public IList<BlockTableEntry> BlockTable { get; set; }
+		public BlockTableEntry[] BlockTable { get; set; }
 
 		protected MpqArchive() {
 		}
@@ -54,7 +54,7 @@ namespace Nmpq {
 			var hashTableEntries = ReadTableEntires<HashTableEntry>("(hash table)", Header.HashTableOffset, Header.HashTableEntryCount);
 			var blockTableEntries = ReadTableEntires<BlockTableEntry>("(block table)", Header.BlockTableOffset, Header.BlockTableEntryCount);
 
-			BlockTable = blockTableEntries.ToList();
+			BlockTable = blockTableEntries.ToArray();
 			HashTable = new HashTable(hashTableEntries.ToArray());
 		}
 
