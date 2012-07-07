@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using ICSharpCode.SharpZipLib.BZip2;
+using Newtonsoft.Json.Linq;
 using Nmpq.Parsing;
 
 namespace Nmpq {
@@ -67,8 +68,9 @@ namespace Nmpq {
 
 			handle.Free();
 		}
+
 		// todos: better decompression, multi-block files
-		public byte[] ReadFileBytes(string path) {
+		public byte[] ExtractFileBytes(string path) {
 			if (path == null) throw new ArgumentNullException("path");
 
 			var hashA = Crypto.Hash(path, HashType.FilePathA);
@@ -135,7 +137,7 @@ namespace Nmpq {
 		}
 
 		private List<string> ParseListfile() {
-			var listfile = ReadFileBytes("(listfile)");
+			var listfile = ExtractFileBytes("(listfile)");
 
 			if (listfile == null) {
 				return new List<string>();
@@ -144,6 +146,15 @@ namespace Nmpq {
 			var contents = Encoding.ASCII.GetString(listfile);
 			var entries = contents.Split(new[] { ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 			return entries.ToList();
+		}
+
+
+		public JObject ExtractSerializedData(string path) {
+			throw new NotImplementedException();
+		}
+
+		public Stream OpenFile(string path) {
+			throw new NotImplementedException();
 		}
 
 		//public object ReadSerializedData(string path) {

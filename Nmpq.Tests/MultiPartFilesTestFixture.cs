@@ -6,7 +6,7 @@ namespace Nmpq.Tests {
 		[Test]
 		public void Multi_part_file_data_is_read_successfully() {
 			using (var archive = TestArchiveFactory.OpenTestArchive2()) {
-				var file = archive.ReadFileBytes("Minimap.tga");
+				var file = archive.ExtractFileBytes("Minimap.tga");
 			}
 		}
 	}
