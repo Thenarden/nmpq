@@ -10,7 +10,7 @@ namespace Nmpq.Tests {
 			Assume.That(File.Exists(path));
 
 			using(var archive = MpqArchive.Open(path)) {
-				var listfile = archive.OpenFile("(listfile)");
+				var listfile = archive.ReadFileBytes("(listfile)");
 
 				Assert.That(listfile, Is.Not.Null);
 			}

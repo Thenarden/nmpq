@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Nmpq.Parsing {
 	[StructLayout(LayoutKind.Explicit, Pack = 1)]
-	public struct MpqHeader {
+	public struct ArchiveHeader {
 		public bool IsMagicValid {
 			get {
 				var bytes = BitConverter.GetBytes(Magic);

@@ -23,5 +23,13 @@ namespace Nmpq.Parsing {
 		public bool IsCompressed {
 			get { return (Flags & BlockFlags.FileIsCompressed) != 0; }
 		}
+
+		public bool IsEncrypted {
+			get { return (Flags & BlockFlags.FileIsEncrypted) != 0; }
+		}
+
+		public bool IsImploded {
+			get { return (Flags & BlockFlags.FileIsImploded) != 0; }
+		}
 	}
 }

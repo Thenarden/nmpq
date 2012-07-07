@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,12 +47,16 @@
     <Compile Include="Parsing\BinaryReaderExtensions.cs" />
     <Compile Include="Parsing\BlockFlags.cs" />
     <Compile Include="Parsing\BlockTableEntry.cs" />
+    <Compile Include="Parsing\CompressionFlags.cs" />
     <Compile Include="Parsing\Crypto.cs" />
     <Compile Include="HashTable.cs" />
     <Compile Include="Parsing\HashTableEntry.cs" />
     <Compile Include="Parsing\HashType.cs" />
-    <Compile Include="Parsing\MpqHeader.cs" />
+    <Compile Include="Parsing\ArchiveHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

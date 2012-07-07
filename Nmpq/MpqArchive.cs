@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using ICSharpCode.SharpZipLib.BZip2;
 using Nmpq.Parsing;
 
 namespace Nmpq {
@@ -13,7 +14,7 @@ namespace Nmpq {
 
 		public int ArchiveOffset { get; set; }
 		public int UserDataSize { get; set; }
-		public MpqHeader Header { get; set; }
+		public ArchiveHeader ArchiveHeader { get; set; }
 		public HashTable HashTable { get; set; }
 		public BlockTableEntry[] BlockTable { get; set; }
 
@@ -51,8 +52,8 @@ namespace Nmpq {
 			ReadUserDataHeader();
 			ReadAndValidateArchiveHeader();
 
-			var hashTableEntries = ReadTableEntires<HashTableEntry>("(hash table)", Header.HashTableOffset, Header.HashTableEntryCount);
-			var blockTableEntries = ReadTableEntires<BlockTableEntry>("(block table)", Header.BlockTableOffset, Header.BlockTableEntryCount);
+			var hashTableEntries = ReadTableEntires<HashTableEntry>("(hash table)", ArchiveHeader.HashTableOffset, ArchiveHeader.HashTableEntryCount);
+			var blockTableEntries = ReadTableEntires<BlockTableEntry>("(block table)", ArchiveHeader.BlockTableOffset, ArchiveHeader.BlockTableEntryCount);
 
 			BlockTable = blockTableEntries.ToArray();
 			HashTable = new HashTable(hashTableEntries.ToArray());
@@ -82,15 +83,15 @@ namespace Nmpq {
 		private void ReadAndValidateArchiveHeader() {
 			Seek(0);
 
-			Header = _reader.ReadStruct<MpqHeader>();
+			ArchiveHeader = _reader.ReadStruct<ArchiveHeader>();
 
-			if (!Header.IsMagicValid)
+			if (!ArchiveHeader.IsMagicValid)
 				throw new Exception("Invalid MPQ header, this is probably not an MPQ archive. (Invalid magic)");
 
-			if (!Header.IsBurningCrusadeFormat)
+			if (!ArchiveHeader.IsBurningCrusadeFormat)
 				throw new Exception("Invalid MPQ format. Must be '1'.");
 
-			if (Header.HeaderSize != 0x2c)
+			if (ArchiveHeader.HeaderSize != 0x2c)
 				throw new Exception("Unexpected header size for specified MPQ format.");
 		}
 
@@ -148,7 +149,7 @@ namespace Nmpq {
 		}
 
 		// todos: decompression, multi-block files
-		public byte[] OpenFile(string path) {
+		public byte[] ReadFileBytes(string path) {
 			if (path == null) throw new ArgumentNullException("path");
 
 			var hashA = Crypto.Hash(path, HashType.FilePathA);
@@ -162,20 +163,35 @@ namespace Nmpq {
 			var blockEntry = BlockTable[entry.Value.FileBlockIndex];
 
 			if (!blockEntry.IsFile)
-				return null;
+				throw new NotSupportedException("Non-file blocks are not currently supported by Nmpq.");
+
+			if (blockEntry.IsEncrypted)
+				throw new NotSupportedException("Encrypted files are not currently supported by Nmpq.");
+
+			if (blockEntry.IsImploded)
+				throw new NotSupportedException("Imploded files are not currently supported by Nmpq.");
+
+			if (!blockEntry.IsFileSingleUnit)
+				throw new NotSupportedException("Multi-block files are not currently supported by Nmpq.");
 
 			Seek(blockEntry.BlockOffset);
 
-			var data = _reader.ReadBytes(blockEntry.BlockSize);
+			var block = _reader.ReadBytes(blockEntry.BlockSize);
 
-			if (blockEntry.IsFileSingleUnit) {
-				if (blockEntry.IsCompressed)
-					return null;
+			if (blockEntry.IsCompressed) {
+				var compressionFlag = (CompressionFlags) block[0];
 
-				return data;
+				if (compressionFlag != CompressionFlags.Bzip2)
+					throw new NotSupportedException("Currenlty only Bzip2 compression is supported by Nmpq.");
+
+				using(var inputStream = new MemoryStream(block, 1, block.Length - 1))	// skip the first byte, which is the compression flag
+				using(var outputStream = new MemoryStream()) {
+					BZip2.Decompress(inputStream, outputStream, false);
+					return outputStream.ToArray();
+				}
 			}
-
-			return null;
+			
+			return block;
 		}
 	}
 }
