@@ -1,8 +1,8 @@
 namespace Nmpq.Parsing {
 	public enum HashType : uint {
-		TableOffset = 0,
+		FileHashTableIndex = 0,
 		FilePathA = 1,
 		FilePathB = 2,
-		FileKey = 3,
+		TableKey = 3,
 	}
 }

@@ -94,27 +94,39 @@ namespace Nmpq {
 				throw new Exception("Unexpected header size for specified MPQ format.");
 		}
 
-		private IEnumerable<T> ReadTableEntires<T>(string name, int offset, int numberOfEntries) {
-			Seek(offset);
+		private IEnumerable<T> ReadTableEntires<T>(string name, int tableOffset, int numberOfEntries) {
+			Seek(tableOffset);
 
-			var size = Marshal.SizeOf(typeof(T));
-			var data = _reader.ReadBytes(size * numberOfEntries);
-			var key = Crypto.Hash(name, HashType.TableOffset);
+			var entrySize = Marshal.SizeOf(typeof(T));
+			var data = _reader.ReadBytes(entrySize * numberOfEntries);
+			var key = Crypto.Hash(name, HashType.TableKey);
 
 			Crypto.DecryptInPlace(data, key);
 
-			using (var memoryStream = new MemoryStream(data))
-			using (var tableReader = new BinaryReader(memoryStream)) {
-				while (tableReader.BaseStream.Position != tableReader.BaseStream.Length)
-					yield return tableReader.ReadStruct<T>();
+			var handle = GCHandle.Alloc(data, GCHandleType.Pinned);
+			var addr = handle.AddrOfPinnedObject();
+
+			for (var i = 0; i < numberOfEntries; i++) {
+				var entryOffset = i * entrySize;
+				var entryPointer = addr + entryOffset;
+
+				yield return (T)Marshal.PtrToStructure(entryPointer, typeof (T));
 			}
+
+			handle.Free();
+
+			//using (var memoryStream = new MemoryStream(data))
+			//using (var tableReader = new BinaryReader(memoryStream)) {
+			//	while (tableReader.BaseStream.Position != tableReader.BaseStream.Length)
+			//		yield return tableReader.ReadStruct<T>();
+			//}
 		}
 
 		private static ulong ComputeFileKey(string path, BlockTableEntry blockTableEntry, ulong archiveOffset) {
 			if (path == null) throw new ArgumentNullException("path");
 
 			var filename = Path.GetFileName(path); // is this kosher? do MPQ paths have the same syntax and semantics as system paths?
-			var fileKey = Crypto.Hash(filename, HashType.FileKey);
+			var fileKey = Crypto.Hash(filename, HashType.TableKey);
 
 			return blockTableEntry.HasKeyAdjustedByBlockOffset
 					? (fileKey + (ulong)blockTableEntry.BlockOffset) ^ (ulong)blockTableEntry.FileSize

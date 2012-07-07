@@ -6,10 +6,10 @@ namespace Nmpq.Parsing {
 	[StructLayout(LayoutKind.Explicit, Pack = 1)]
 	public struct HashTableEntry {
 		[FieldOffset(0x00)]
-		public int FilePathHashA;
+		public uint FilePathHashA;
 
 		[FieldOffset(0x04)]
-		public int FilePathHashB;
+		public uint FilePathHashB;
 
 		[FieldOffset(0x08)]
 		public short Language;
@@ -18,7 +18,7 @@ namespace Nmpq.Parsing {
 		public byte Platform;
 
 		[FieldOffset(0x0c)]
-		public int FileBlockIndex;
+		public uint FileBlockIndex;
 
 		private const uint EmptyMarker = 0xffffffff;
 
