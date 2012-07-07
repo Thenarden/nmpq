@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -99,14 +100,35 @@ namespace Nmpq {
 			if (blockEntry.IsCompressed) {
 				var compressionFlag = (CompressionFlags)block[0];
 
-				if (compressionFlag != CompressionFlags.Bzip2)
-					throw new NotSupportedException("Currenlty only Bzip2 compression is supported by Nmpq.");
-
-				using (var inputStream = new MemoryStream(block, 1, block.Length - 1))	// skip the first byte, which is the compression flag
-				using (var outputStream = new MemoryStream()) {
-					BZip2.Decompress(inputStream, outputStream, false);
-					return outputStream.ToArray();
+				if (compressionFlag == CompressionFlags.Bzip2) {
+					using (var inputStream = new MemoryStream(block, 1, block.Length - 1)) // skip compression flag
+					using (var outputStream = new MemoryStream()) {
+						BZip2.Decompress(inputStream, outputStream, false);
+						return outputStream.ToArray();
+					}
 				}
+
+				if (compressionFlag == CompressionFlags.Deflated) {
+					// see http://george.chiramattel.com/blog/2007/09/deflatestream-block-length-does-not-match.html
+					// and possibly http://connect.microsoft.com/VisualStudio/feedback/details/97064/deflatestream-throws-exception-when-inflating-pdf-streams
+					// for more info on why we have to skip two extra bytes because of ZLIB
+					using (var inputStream = new MemoryStream(block, 3, block.Length - 3)) // skip compression flag, skip ZLIB bytes 
+					using (var deflate = new DeflateStream(inputStream, CompressionMode.Decompress)) 
+					using (var outputStream = new MemoryStream()) {
+						var buffer = new byte[1024];
+						var read = deflate.Read(buffer, 0, buffer.Length);
+
+						while(read == buffer.Length) {
+							outputStream.Write(buffer, 0, read);
+							read = deflate.Read(buffer, 0, buffer.Length);
+						}
+
+						outputStream.Write(buffer, 0, read);
+						return outputStream.ToArray();
+					}
+				}
+
+				throw new NotSupportedException("Currenlty only Bzip2 and Deflate compression is supported by Nmpq.");
 			}
 
 			return block;
