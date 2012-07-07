@@ -51,6 +51,7 @@
     <Compile Include="FileTests.cs" />
     <Compile Include="HashTableTests.cs" />
     <Compile Include="ArchiveHeaderTests.cs" />
+    <Compile Include="KnownFilesPropertyTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestArchiveFactory.cs" />
     <Compile Include="TestingStreamWrapper.cs" />

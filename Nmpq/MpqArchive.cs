@@ -18,6 +18,30 @@ namespace Nmpq {
 		public HashTable HashTable { get; set; }
 		public BlockTableEntry[] BlockTable { get; set; }
 
+		private IList<string> _knownFiles;
+
+		public IList<string> KnownFiles {
+			get {
+				if (_knownFiles == null) {
+					_knownFiles = GetKnownFiles().AsReadOnly();
+				}
+
+				return _knownFiles;
+			}
+		}
+
+		private List<string> GetKnownFiles() {
+			var listfile = ReadFileBytes("(listfile)");
+
+			if (listfile == null) {
+				return new List<string>();
+			}
+
+			var contents = Encoding.ASCII.GetString(listfile);
+			var entries = contents.Split(new[] {';', '\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
+			return entries.ToList();
+		}
+
 		protected MpqArchive() {
 		}
 
