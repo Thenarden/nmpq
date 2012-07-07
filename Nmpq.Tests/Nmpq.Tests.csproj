@@ -48,6 +48,7 @@
     <Compile Include="BlockTableTests.cs" />
     <Compile Include="CleanupTests.cs" />
     <Compile Include="CryptoTests.cs" />
+    <Compile Include="DeserializationTests.cs" />
     <Compile Include="FileTests.cs" />
     <Compile Include="HashTableTests.cs" />
     <Compile Include="ArchiveHeaderTests.cs" />
