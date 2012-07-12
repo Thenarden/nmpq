@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Nmpq.Parsing {
 	public static class Deserialization {
-		public static object ParseSerializedData(BinaryReader reader) {
+		public static object ParseSerializedData(BinaryReader reader, bool convertStringsToUtf8) {
 			if (reader == null) throw new ArgumentNullException("reader");
 
 			var type = (SerializedDataType)reader.ReadByte();
@@ -19,11 +19,14 @@ namespace Nmpq.Parsing {
 			if (type == SerializedDataType.VariableLengthInteger)
 				return ParseVariableLengthInteger(reader);
 
-			if (type == SerializedDataType.String) {
+			if (type == SerializedDataType.BinaryString) {
 				var length = ParseVariableLengthInteger(reader);
 				var bytes = reader.ReadBytes((int)length);
-				var str = Encoding.UTF8.GetString(bytes);
-				return str;
+
+				if (convertStringsToUtf8)
+					return Encoding.UTF8.GetString(bytes);
+
+				return bytes;
 			}
 
 			if (type == SerializedDataType.Array) {
@@ -33,7 +36,7 @@ namespace Nmpq.Parsing {
 				var array = new object[length];
 
 				for (var i = 0; i < length; i++)
-					array[i] = ParseSerializedData(reader);
+					array[i] = ParseSerializedData(reader, convertStringsToUtf8);
 
 				return array;
 			}
@@ -44,7 +47,7 @@ namespace Nmpq.Parsing {
 
 				for (var i = 0; i < length; i++) {
 					var key = ParseVariableLengthInteger(reader);
-					var value = ParseSerializedData(reader);
+					var value = ParseSerializedData(reader, convertStringsToUtf8);
 
 					//var keyString = key.ToString(NumberFormatInfo.InvariantInfo);
 					dict[key] = value;

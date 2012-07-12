@@ -7,6 +7,6 @@ namespace Nmpq {
 
 		Stream OpenFile(string path);
 		byte[] ExtractFileBytes(string path);
-		object ExtractSerializedData(string path);
+		object ExtractSerializedData(string path, bool convertStringsToUtf8);
 	}
 }

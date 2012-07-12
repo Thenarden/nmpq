@@ -156,10 +156,10 @@ namespace Nmpq {
 		}
 
 
-		public object ExtractSerializedData(string path) {
+		public object ExtractSerializedData(string path, bool convertStringsToUtf8) {
 			using(var memory = new MemoryStream(ExtractFileBytes(path))) 
 			using(var reader = new BinaryReader(memory)) {
-				return Deserialization.ParseSerializedData(reader);
+				return Deserialization.ParseSerializedData(reader, convertStringsToUtf8);
 			}
 		}
 

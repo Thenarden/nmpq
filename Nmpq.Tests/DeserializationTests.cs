@@ -8,7 +8,7 @@ namespace Nmpq.Tests {
 		[Test]
 		public void Can_parsed_serialized_data_from_sc2_replay() {
 			using(var archive = TestArchiveFactory.OpenTestArchive1()) {
-				dynamic replayDetails = archive.ExtractSerializedData("replay.details");
+				dynamic replayDetails = archive.ExtractSerializedData("replay.details", true);
 
 				Assert.That(replayDetails, Is.Not.Null);
 			}
