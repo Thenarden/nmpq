@@ -7,15 +7,15 @@ using Nmpq.Parsing;
 
 namespace Nmpq {
 	public partial class MpqArchive : IMpqArchive, IDisposable {
-		private BinaryReader _reader;
-		private bool _cleanupStreamOnDispose;
-
 		public int ArchiveOffset { get; set; }
 		public int UserDataSize { get; set; }
 		public ArchiveHeader ArchiveHeader { get; set; }
 		public HashTable HashTable { get; set; }
 		public BlockTableEntry[] BlockTable { get; set; }
+		public int SectorSize { get; set; }
 
+		private BinaryReader _reader;
+		private bool _cleanupStreamOnDispose;
 		private IList<string> _knownFiles;
 
 		public IList<string> KnownFiles {
@@ -61,6 +61,8 @@ namespace Nmpq {
 
 			ReadUserDataHeader();
 			ReadAndValidateArchiveHeader();
+
+			SectorSize = 512 << ArchiveHeader.SectorSizeShift;
 
 			var hashTableEntries = ReadTableEntires<HashTableEntry>("(hash table)", ArchiveHeader.HashTableOffset, ArchiveHeader.HashTableEntryCount);
 			var blockTableEntries = ReadTableEntires<BlockTableEntry>("(block table)", ArchiveHeader.BlockTableOffset, ArchiveHeader.BlockTableEntryCount);

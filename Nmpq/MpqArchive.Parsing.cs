@@ -100,10 +100,11 @@ namespace Nmpq {
 			if (blockEntry.Value.IsImploded)
 				throw new NotSupportedException("Imploded files are not currently supported by Nmpq.");
 
-			if (!blockEntry.Value.IsFileSingleUnit)
-				throw new NotSupportedException("Multi-block files are not currently supported by Nmpq.");
-
 			Seek(blockEntry.Value.BlockOffset);
+
+			if (!blockEntry.Value.IsFileSingleUnit) {
+				return ReadMultiUnitFile(blockEntry.Value);
+			}
 
 			// file is only compressed if the block size is smaller than the file size.
 			//	per docs at (http://wiki.devklog.net/index.php?title=MPQ_format_specification)
@@ -150,6 +151,48 @@ namespace Nmpq {
 			}
 
 			throw new NotSupportedException("Currenlty only Bzip2 and Deflate compression is supported by Nmpq.");
+		}
+
+		private byte[] ReadMultiUnitFile(BlockTableEntry blockEntry) {
+			var sectorCount = (blockEntry.BlockSize/SectorSize) + 1;
+
+			var sectorTable = new int[sectorCount + 1];
+
+			for(var i = 0; i < sectorTable.Length; i++) {
+				sectorTable[i] = _reader.ReadInt32();
+			}
+
+			var result = new byte[blockEntry.FileSize];
+			var resultPosition = 0;
+
+			for(var i = 0; i < sectorCount; i++) {
+				var position = sectorTable[i];
+				var length = sectorTable[i + 1] - position;
+
+				Seek(position);
+				var sectorData = _reader.ReadBytes(length);
+
+				if (blockEntry.IsCompressed && length < SectorSize) {
+					var compressionFlags = (CompressionFlags) _reader.ReadByte();
+
+					if (compressionFlags == CompressionFlags.Bzip2) {
+						using (var inputStream = new MemoryStream(sectorData, 1, sectorData.Length - 1))
+						using (var outputStream = new MemoryStream()) {
+							BZip2.Decompress(inputStream, outputStream, false);
+							sectorData = outputStream.ToArray();
+						}						
+					}
+					else {
+						throw new NotSupportedException("Currenlty only Bzip2 and is supported by Nmpq for multi-part files.");						
+					}
+				}
+
+
+				Array.ConstrainedCopy(sectorData, 0, result, resultPosition, sectorData.Length);
+				resultPosition += sectorData.Length;
+			}
+
+			return result;
 		}
 
 		private List<string> ParseListfile() {

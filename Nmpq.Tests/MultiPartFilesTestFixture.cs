@@ -5,8 +5,12 @@ namespace Nmpq.Tests {
 	public class MultiPartFilesTestFixture {
 		[Test]
 		public void Multi_part_file_data_is_read_successfully() {
-			using (var archive = TestArchiveFactory.OpenTestArchive2()) {
+			var expected = ObjectMother.GetTestArchive2Minimap();
+
+			using (var archive = ObjectMother.OpenTestArchive2()) {
 				var file = archive.ExtractFileBytes("Minimap.tga");
+
+				Assert.That(file, Is.EqualTo(expected));
 			}
 		}
 	}

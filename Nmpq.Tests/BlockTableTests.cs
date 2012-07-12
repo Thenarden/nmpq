@@ -6,7 +6,7 @@ namespace Nmpq.Tests {
 	public class BlockTableTests {
 		[Test]
 		public void Block_table_is_read_correctly() {
-			using(var archive = TestArchiveFactory.OpenTestArchive1()) {
+			using(var archive = ObjectMother.OpenTestArchive1()) {
 				var table = archive.BlockTable;
 
 				Assert.That(table, Has.Length.EqualTo(10));

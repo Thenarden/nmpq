@@ -56,7 +56,7 @@
     <Compile Include="MultiPartFilesTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StreamTests.cs" />
-    <Compile Include="TestArchiveFactory.cs" />
+    <Compile Include="ObjectMother.cs" />
     <Compile Include="TestingStreamWrapper.cs" />
     <Compile Include="TestUtil.cs" />
   </ItemGroup>
@@ -74,6 +74,11 @@
       <Project>{849EC213-E069-4DBF-982C-0DE82249C049}</Project>
       <Name>Nmpq</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestArchives\Archive2-Minimap.tga">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

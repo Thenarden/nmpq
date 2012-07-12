@@ -7,7 +7,7 @@ namespace Nmpq.Tests {
 	public class FileTests {
 		[Test]
 		public void Open_returns_data_for_specified_file_if_it_exists_in_archive() {
-			using(var archive = TestArchiveFactory.OpenTestArchive1()) {
+			using(var archive = ObjectMother.OpenTestArchive1()) {
 				var listfile = archive.ExtractFileBytes("(listfile)");
 
 				Assert.That(listfile, Is.Not.Null);
@@ -26,7 +26,7 @@ replay.smartcam.events
 replay.sync.events
 ";
 
-			using(var archive = TestArchiveFactory.OpenTestArchive1()) {
+			using(var archive = ObjectMother.OpenTestArchive1()) {
 				var listfile = archive.ExtractFileBytes("(listfile)");
 				Assume.That(listfile, Is.Not.Null.And.Not.Empty);
 
@@ -42,7 +42,7 @@ replay.sync.events
 					  22 80 00 00 17 01 00 22 80 00 00 1B 01 00 22 80 00 00 1E 00 00 22 
 					  80 00 00 32 00 01 B2 02 00 04 67 6C 68 66 01 CE 01 00 02 75 32");
 
-			using(var archive = TestArchiveFactory.OpenTestArchive1()) {
+			using(var archive = ObjectMother.OpenTestArchive1()) {
 				var file = archive.ExtractFileBytes("replay.message.events");
 
 				Assert.That(file, Is.EqualTo(expectedBytes));
@@ -95,7 +95,7 @@ zhCN.SC2Data\LocalizedData\GameStrings.txt
 zhTW.SC2Data\LocalizedData\GameStrings.txt
 ";
 
-			using(var archive = TestArchiveFactory.OpenTestArchive2()) {
+			using(var archive = ObjectMother.OpenTestArchive2()) {
 				var listfile = archive.ExtractFileBytes("(listfile)");
 				Assume.That(listfile, Is.Not.Null.And.Not.Empty);
 
