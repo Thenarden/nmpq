@@ -58,6 +58,7 @@
     <Compile Include="Parsing\HashTableEntry.cs" />
     <Compile Include="Parsing\HashType.cs" />
     <Compile Include="Parsing\ArchiveHeader.cs" />
+    <Compile Include="Parsing\MpqFileStream.cs" />
     <Compile Include="Parsing\SerializedDataType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
