@@ -36,6 +36,20 @@ replay.sync.events
 		}
 
 		[Test]
+		public void Can_read_files_that_are_marked_as_compressed_but_arent_compressed() {
+			var expectedBytes = TestUtil.ParseBytes(
+					@"00 22 80 00 00 0B 01 00 22 80 00 00 0F 00 00 22 80 00 00 13 00 00 
+					  22 80 00 00 17 01 00 22 80 00 00 1B 01 00 22 80 00 00 1E 00 00 22 
+					  80 00 00 32 00 01 B2 02 00 04 67 6C 68 66 01 CE 01 00 02 75 32");
+
+			using(var archive = TestArchiveFactory.OpenTestArchive1()) {
+				var file = archive.ExtractFileBytes("replay.message.events");
+
+				Assert.That(file, Is.EqualTo(expectedBytes));
+			}
+		}
+
+		[Test]
 		public void Files_using_deflate_compression_are_opened_successfully() {
 			var expectedListfileContents = @"Base.SC2Data\GameData\TerrainData.xml
 Base.SC2Data\GameData\WaterData.xml

@@ -5,6 +5,15 @@ using NUnit.Framework;
 namespace Nmpq.Tests {
 	[TestFixture]
 	public class DeserializationTests {
+		[Test]
+		public void Can_parsed_serialized_data_from_sc2_replay() {
+			using(var archive = TestArchiveFactory.OpenTestArchive1()) {
+				var replayDetails = archive.ExtractSerializedData("replay.details");
+
+				Assert.That(replayDetails, Is.Not.Null);
+			}
+		}
+
 		// format information and test values taken from http://www.teamliquid.net/forum/viewmessage.php?topic_id=117260&currentpage=3#45
 		[TestCase(new byte[] { 0x00 }, 0)]
 		[TestCase(new byte[] { 0x01 }, 0)]

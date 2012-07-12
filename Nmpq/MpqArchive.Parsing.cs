@@ -97,43 +97,51 @@ namespace Nmpq {
 
 			Seek(blockEntry.BlockOffset);
 
-			var block = _reader.ReadBytes(blockEntry.BlockSize);
+			// file is only compressed if the block size is smaller than the file size.
+			//	per docs at (http://wiki.devklog.net/index.php?title=MPQ_format_specification)
+			var compressed = blockEntry.IsCompressed && blockEntry.BlockSize < blockEntry.FileSize;
 
-			if (blockEntry.IsCompressed) {
-				var compressionFlag = (CompressionFlags)block[0];
-
-				if (compressionFlag == CompressionFlags.Bzip2) {
-					using (var inputStream = new MemoryStream(block, 1, block.Length - 1)) // skip compression flag
-					using (var outputStream = new MemoryStream()) {
-						BZip2.Decompress(inputStream, outputStream, false);
-						return outputStream.ToArray();
-					}
-				}
-
-				if (compressionFlag == CompressionFlags.Deflated) {
-					// see http://george.chiramattel.com/blog/2007/09/deflatestream-block-length-does-not-match.html
-					// and possibly http://connect.microsoft.com/VisualStudio/feedback/details/97064/deflatestream-throws-exception-when-inflating-pdf-streams
-					// for more info on why we have to skip two extra bytes because of ZLIB
-					using (var inputStream = new MemoryStream(block, 3, block.Length - 3)) // skip compression flag, skip ZLIB bytes 
-					using (var deflate = new DeflateStream(inputStream, CompressionMode.Decompress)) 
-					using (var outputStream = new MemoryStream()) {
-						var buffer = new byte[1024];
-						var read = deflate.Read(buffer, 0, buffer.Length);
-
-						while(read == buffer.Length) {
-							outputStream.Write(buffer, 0, read);
-							read = deflate.Read(buffer, 0, buffer.Length);
-						}
-
-						outputStream.Write(buffer, 0, read);
-						return outputStream.ToArray();
-					}
-				}
-
-				throw new NotSupportedException("Currenlty only Bzip2 and Deflate compression is supported by Nmpq.");
+			if (!compressed) {
+				return _reader.ReadBytes(blockEntry.BlockSize);
 			}
 
-			return block;
+			// first byte of each compressed block is a set of flags indicating which 
+			//	compression algorithm(s) to use
+			var compressionFlags = (CompressionFlags) _reader.ReadByte();
+
+			// compression flags don't count toward the data size, but does toward the block size
+			var dataSize = blockEntry.BlockSize - 1; 
+			var blockData = _reader.ReadBytes(dataSize);
+
+			if (compressionFlags == CompressionFlags.Bzip2) {
+				using (var inputStream = new MemoryStream(blockData))
+				using (var outputStream = new MemoryStream()) {
+					BZip2.Decompress(inputStream, outputStream, false);
+					return outputStream.ToArray();
+				}
+			}
+
+			if (compressionFlags == CompressionFlags.Deflated) {
+				// see http://george.chiramattel.com/blog/2007/09/deflatestream-block-length-does-not-match.html
+				// and possibly http://connect.microsoft.com/VisualStudio/feedback/details/97064/deflatestream-throws-exception-when-inflating-pdf-streams
+				// for more info on why we have to skip two extra bytes because of ZLIB
+				using (var inputStream = new MemoryStream(blockData, 2, blockData.Length - 2)) // skip ZLIB bytes 
+				using (var deflate = new DeflateStream(inputStream, CompressionMode.Decompress)) 
+				using (var outputStream = new MemoryStream()) {
+					var buffer = new byte[1024];
+					var read = deflate.Read(buffer, 0, buffer.Length);
+
+					while(read == buffer.Length) {
+						outputStream.Write(buffer, 0, read);
+						read = deflate.Read(buffer, 0, buffer.Length);
+					}
+
+					outputStream.Write(buffer, 0, read);
+					return outputStream.ToArray();
+				}
+			}
+
+			throw new NotSupportedException("Currenlty only Bzip2 and Deflate compression is supported by Nmpq.");
 		}
 
 		private List<string> ParseListfile() {
@@ -150,7 +158,10 @@ namespace Nmpq {
 
 
 		public JObject ExtractSerializedData(string path) {
-			throw new NotImplementedException();
+			using(var memory = new MemoryStream(ExtractFileBytes(path))) 
+			using(var reader = new BinaryReader(memory)) {
+				return Deserialization.ParseSerializedData(reader);
+			}
 		}
 
 		public Stream OpenFile(string path) {

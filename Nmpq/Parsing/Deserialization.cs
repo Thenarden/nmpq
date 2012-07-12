@@ -10,18 +10,21 @@ namespace Nmpq.Parsing {
 
 			var type = (SerializedDataType)reader.ReadByte();
 
+			if (type == SerializedDataType.SingleByteInteger)
+				return new JObject(reader.ReadByte());
+
+			if (type == SerializedDataType.FourByteInteger)
+				return new JObject(reader.ReadInt32());
+
+			if (type == SerializedDataType.VariableLengthInteger)
+				return new JObject(ParseVariableLengthInteger(reader));
+
 			if (type == SerializedDataType.String) {
 				var length = ParseVariableLengthInteger(reader);
 				var bytes = reader.ReadBytes(length);
 				var str = Encoding.UTF8.GetString(bytes);
 				return new JObject(str);
 			}
-
-			if (type == SerializedDataType.SingleByteInteger)
-				return new JObject(reader.ReadByte());
-
-			if (type == SerializedDataType.FourByteInteger)
-				return new JObject(reader.ReadInt32());
 
 			if (type == SerializedDataType.Array) {
 				reader.SkipBytes(2);	// arrays are always followed by the bytes 0x01 0x00
@@ -50,7 +53,7 @@ namespace Nmpq.Parsing {
 			}
 
 			throw new NotSupportedException(
-				string.Format("Serialized data type {0} is not supported.", (byte) type));
+				string.Format("Serialized data with type flag '{0}' is not supported.", (byte) type));
 		}
 
 		public static int ParseVariableLengthInteger(BinaryReader reader) {
