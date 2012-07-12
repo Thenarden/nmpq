@@ -10,6 +10,8 @@ using Nmpq.Parsing;
 
 namespace Nmpq {
 	public partial class MpqArchive {
+		public bool HasOpenFile { get; private set; }
+
 		private void ReadUserDataHeader() {
 			var magicString = new string(_reader.ReadChars(3));
 			var userDataIndicator = _reader.ReadByte();
@@ -68,10 +70,7 @@ namespace Nmpq {
 			handle.Free();
 		}
 
-		// todos: better decompression, multi-block files
-		public byte[] ExtractFileBytes(string path) {
-			if (path == null) throw new ArgumentNullException("path");
-
+		private BlockTableEntry? FindBlockTableEntry(string path) {
 			var hashA = Crypto.Hash(path, HashType.FilePathA);
 			var hashB = Crypto.Hash(path, HashType.FilePathB);
 
@@ -80,28 +79,38 @@ namespace Nmpq {
 			if (entry == null)
 				return null;
 
-			var blockEntry = BlockTable[entry.Value.FileBlockIndex];
+			return BlockTable[entry.Value.FileBlockIndex];
+		}
 
-			if (!blockEntry.IsFile)
+		// todos: better decompression, multi-block files
+		public byte[] ExtractFileBytes(string path) {
+			if (path == null) throw new ArgumentNullException("path");
+
+			var blockEntry = FindBlockTableEntry(path);
+
+			if (blockEntry == null)
+				return null;
+
+			if (!blockEntry.Value.IsFile)
 				throw new NotSupportedException("Non-file blocks are not currently supported by Nmpq.");
 
-			if (blockEntry.IsEncrypted)
+			if (blockEntry.Value.IsEncrypted)
 				throw new NotSupportedException("Encrypted files are not currently supported by Nmpq.");
 
-			if (blockEntry.IsImploded)
+			if (blockEntry.Value.IsImploded)
 				throw new NotSupportedException("Imploded files are not currently supported by Nmpq.");
 
-			if (!blockEntry.IsFileSingleUnit)
+			if (!blockEntry.Value.IsFileSingleUnit)
 				throw new NotSupportedException("Multi-block files are not currently supported by Nmpq.");
 
-			Seek(blockEntry.BlockOffset);
+			Seek(blockEntry.Value.BlockOffset);
 
 			// file is only compressed if the block size is smaller than the file size.
 			//	per docs at (http://wiki.devklog.net/index.php?title=MPQ_format_specification)
-			var compressed = blockEntry.IsCompressed && blockEntry.BlockSize < blockEntry.FileSize;
+			var compressed = blockEntry.Value.IsCompressed && blockEntry.Value.BlockSize < blockEntry.Value.FileSize;
 
 			if (!compressed) {
-				return _reader.ReadBytes(blockEntry.BlockSize);
+				return _reader.ReadBytes(blockEntry.Value.BlockSize);
 			}
 
 			// first byte of each compressed block is a set of flags indicating which 
@@ -109,7 +118,7 @@ namespace Nmpq {
 			var compressionFlags = (CompressionFlags) _reader.ReadByte();
 
 			// compression flags don't count toward the data size, but does toward the block size
-			var dataSize = blockEntry.BlockSize - 1; 
+			var dataSize = blockEntry.Value.BlockSize - 1; 
 			var blockData = _reader.ReadBytes(dataSize);
 
 			if (compressionFlags == CompressionFlags.Bzip2) {
@@ -164,11 +173,20 @@ namespace Nmpq {
 		}
 
 		public Stream OpenFile(string path) {
-			throw new NotImplementedException();
-		}
+			if (path == null) throw new ArgumentNullException("path");
 
-		//public object ReadSerializedData(string path) {
-			
-		//}
+			if (HasOpenFile)
+				throw new InvalidOperationException(
+					"There is already a file open for this archive. You can only have one archive file stream open at a time.");
+
+			var blockEntry = FindBlockTableEntry(path);
+
+			if (blockEntry == null)
+				return null;
+
+			HasOpenFile = true;
+			var fileOffset = blockEntry.Value.BlockOffset + ArchiveOffset;
+			return new MpqFileStream(blockEntry.Value, _reader.BaseStream, fileOffset, () => { HasOpenFile = false; });
+		}
 	}
 }

@@ -10,7 +10,8 @@ namespace Nmpq.Tests {
 			using(var archive = TestArchiveFactory.OpenTestArchive1()) {
 				dynamic replayDetails = archive.ExtractSerializedData("replay.details", true);
 
-				Assert.That(replayDetails, Is.Not.Null);
+				Assert.Fail();
+				//Assert.That(replayDetails, Is.Not.Null);
 			}
 		}
 
