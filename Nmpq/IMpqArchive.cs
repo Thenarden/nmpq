@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using Newtonsoft.Json.Linq;
 
 namespace Nmpq {
 	public interface IMpqArchive {
@@ -8,6 +7,6 @@ namespace Nmpq {
 
 		Stream OpenFile(string path);
 		byte[] ExtractFileBytes(string path);
-		JObject ExtractSerializedData(string path);
+		object ExtractSerializedData(string path);
 	}
 }

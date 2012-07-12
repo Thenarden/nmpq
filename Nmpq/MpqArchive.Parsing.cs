@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using ICSharpCode.SharpZipLib.BZip2;
-using Newtonsoft.Json.Linq;
 using Nmpq.Parsing;
 
 namespace Nmpq {
@@ -157,7 +156,7 @@ namespace Nmpq {
 		}
 
 
-		public JObject ExtractSerializedData(string path) {
+		public object ExtractSerializedData(string path) {
 			using(var memory = new MemoryStream(ExtractFileBytes(path))) 
 			using(var reader = new BinaryReader(memory)) {
 				return Deserialization.ParseSerializedData(reader);

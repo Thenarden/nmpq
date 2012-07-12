@@ -8,7 +8,7 @@ namespace Nmpq.Tests {
 		[Test]
 		public void Can_parsed_serialized_data_from_sc2_replay() {
 			using(var archive = TestArchiveFactory.OpenTestArchive1()) {
-				var replayDetails = archive.ExtractSerializedData("replay.details");
+				dynamic replayDetails = archive.ExtractSerializedData("replay.details");
 
 				Assert.That(replayDetails, Is.Not.Null);
 			}
@@ -30,7 +30,8 @@ namespace Nmpq.Tests {
 		[TestCase(new byte[] { 0x80, 0x02 }, 128)]
 		[TestCase(new byte[] { 0x81, 0x02 }, -128)]
 		[TestCase(new byte[] { 0x80, 0x80, 0x80, 0x10 }, 16777216)]
-		public void Variable_length_integers_are_deserialized_correctly(byte[] bytes, int expectedValue) {
+		[TestCase(new byte[] { 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x10 }, 4503599627370496)]
+		public void Variable_length_integers_are_deserialized_correctly(byte[] bytes, long expectedValue) {
 			using (var stream = new MemoryStream(bytes)) 
 			using (var reader = new BinaryReader(stream)) {
 				var value = Deserialization.ParseVariableLengthInteger(reader);

@@ -1,29 +1,29 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using Newtonsoft.Json.Linq;
 
 namespace Nmpq.Parsing {
 	public static class Deserialization {
-		public static JObject ParseSerializedData(BinaryReader reader) {
+		public static object ParseSerializedData(BinaryReader reader) {
 			if (reader == null) throw new ArgumentNullException("reader");
 
 			var type = (SerializedDataType)reader.ReadByte();
 
 			if (type == SerializedDataType.SingleByteInteger)
-				return new JObject(reader.ReadByte());
+				return (int)reader.ReadByte();
 
 			if (type == SerializedDataType.FourByteInteger)
-				return new JObject(reader.ReadInt32());
+				return reader.ReadInt32();
 
 			if (type == SerializedDataType.VariableLengthInteger)
-				return new JObject(ParseVariableLengthInteger(reader));
+				return ParseVariableLengthInteger(reader);
 
 			if (type == SerializedDataType.String) {
 				var length = ParseVariableLengthInteger(reader);
-				var bytes = reader.ReadBytes(length);
+				var bytes = reader.ReadBytes((int)length);
 				var str = Encoding.UTF8.GetString(bytes);
-				return new JObject(str);
+				return str;
 			}
 
 			if (type == SerializedDataType.Array) {
@@ -35,17 +35,18 @@ namespace Nmpq.Parsing {
 				for (var i = 0; i < length; i++)
 					array[i] = ParseSerializedData(reader);
 
-				return new JObject(array);
+				return array;
 			}
 
 			if (type == SerializedDataType.Map) {
 				var length = ParseVariableLengthInteger(reader);
-				var dict = new JObject();
+				var dict = new Dictionary<long, object>();
 
 				for (var i = 0; i < length; i++) {
 					var key = ParseVariableLengthInteger(reader);
 					var value = ParseSerializedData(reader);
 
+					//var keyString = key.ToString(NumberFormatInfo.InvariantInfo);
 					dict[key] = value;
 				}
 
@@ -56,13 +57,14 @@ namespace Nmpq.Parsing {
 				string.Format("Serialized data with type flag '{0}' is not supported.", (byte) type));
 		}
 
-		public static int ParseVariableLengthInteger(BinaryReader reader) {
+		public static long ParseVariableLengthInteger(BinaryReader reader) {
 			if (reader == null) throw new ArgumentNullException("reader");
-			int value = 0, shift = 0;
+			long value = 0;
+			var shift = 0;
 
 			while (true) {
-				var @byte = reader.ReadByte();
-				value += (@byte & 0x7f) << (shift * 7);
+				long @byte = reader.ReadByte();
+				value |= (@byte & 0x7f) << (shift * 7);
 
 				if ((@byte & 0x80) == 0) {
 					break;
