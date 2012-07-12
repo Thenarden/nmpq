@@ -56,7 +56,7 @@ namespace Nmpq {
 		}
 
 		private void OpenInternal(Stream stream, bool cleanupStreamOnDispose) {
-			_reader = new BinaryReader(stream, Encoding.ASCII);
+			_reader = new BinaryReader(stream, Encoding.UTF8);
 			_cleanupStreamOnDispose = cleanupStreamOnDispose;
 
 			ReadUserDataHeader();

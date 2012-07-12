@@ -8,7 +8,7 @@ namespace Nmpq.Parsing {
 		public bool IsMagicValid {
 			get {
 				var bytes = BitConverter.GetBytes(Magic);
-				var mpq = Encoding.ASCII.GetString(bytes, 0, 3);
+				var mpq = Encoding.UTF8.GetString(bytes, 0, 3);
 				return mpq == "MPQ" && bytes[3] == 0x1a;
 			}
 		}

@@ -143,7 +143,7 @@ namespace Nmpq {
 				return new List<string>();
 			}
 
-			var contents = Encoding.ASCII.GetString(listfile);
+			var contents = Encoding.UTF8.GetString(listfile);
 			var entries = contents.Split(new[] { ';', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 			return entries.ToList();
 		}

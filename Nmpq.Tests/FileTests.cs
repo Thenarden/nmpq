@@ -30,7 +30,7 @@ replay.sync.events
 				var listfile = archive.ExtractFileBytes("(listfile)");
 				Assume.That(listfile, Is.Not.Null.And.Not.Empty);
 
-				var listfileContents = Encoding.ASCII.GetString(listfile);
+				var listfileContents = Encoding.UTF8.GetString(listfile);
 				Assert.That(listfileContents, Is.EqualTo(expectedListfileContents));
 			}
 		}
@@ -85,7 +85,7 @@ zhTW.SC2Data\LocalizedData\GameStrings.txt
 				var listfile = archive.ExtractFileBytes("(listfile)");
 				Assume.That(listfile, Is.Not.Null.And.Not.Empty);
 
-				var listfileContents = Encoding.ASCII.GetString(listfile);
+				var listfileContents = Encoding.UTF8.GetString(listfile);
 				Assert.That(listfileContents, Is.EqualTo(expectedListfileContents));
 			}
 		}

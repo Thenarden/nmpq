@@ -13,7 +13,7 @@ namespace Nmpq.Parsing {
 			if (type == SerializedDataType.String) {
 				var length = ParseVariableLengthInteger(reader);
 				var bytes = reader.ReadBytes(length);
-				var str = Encoding.ASCII.GetString(bytes);
+				var str = Encoding.UTF8.GetString(bytes);
 				return new JObject(str);
 			}
 
