@@ -5,6 +5,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nmpq", "Nmpq\Nmpq.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nmpq.Tests", "Nmpq.Tests\Nmpq.Tests.csproj", "{55CE5737-5F69-41E1-99FC-4CE1CC20784E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C01C97F5-4034-4F2F-9F27-D8B212661265}"
+	ProjectSection(SolutionItems) = preProject
+		stormlib.zip = stormlib.zip
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
