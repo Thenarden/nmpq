@@ -15,6 +15,14 @@ namespace Nmpq.Tests {
 			}
 		}
 
+		[Test]
+		public void ReadSerializedData_returns_null_for_nonexistant_file() {
+			using (var archive = ObjectMother.OpenTestArchive1()) {
+				var file = archive.ReadSerializedData("a file that doesn't exist", true);
+				Assert.Null(file);
+			}
+		}
+
 		// format information and test values taken from http://www.teamliquid.net/forum/viewmessage.php?topic_id=117260&currentpage=3#45
 		[TestCase(new byte[] { 0x00 }, 0)]
 		[TestCase(new byte[] { 0x01 }, 0)]

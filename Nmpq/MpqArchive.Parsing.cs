@@ -219,7 +219,14 @@ namespace Nmpq {
 
 
 		public object ReadSerializedData(string path, bool convertStringsToUtf8) {
-			using(var memory = new MemoryStream(ReadFile(path))) 
+			if (path == null) throw new ArgumentNullException("path");
+
+			var file = ReadFile(path);
+			
+			if (file == null)
+				return null;
+
+			using(var memory = new MemoryStream(file)) 
 			using(var reader = new BinaryReader(memory)) {
 				return Deserialization.ParseSerializedData(reader, convertStringsToUtf8);
 			}
