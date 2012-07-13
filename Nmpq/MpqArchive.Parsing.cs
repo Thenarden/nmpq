@@ -83,7 +83,7 @@ namespace Nmpq {
 		}
 
 		// todos: better decompression, multi-block files
-		public byte[] ExtractFileBytes(string path) {
+		public byte[] ReadFile(string path) {
 			if (path == null) throw new ArgumentNullException("path");
 
 			var blockEntry = FindBlockTableEntry(path);
@@ -206,7 +206,7 @@ namespace Nmpq {
 		}
 
 		private List<string> ParseListfile() {
-			var listfile = ExtractFileBytes("(listfile)");
+			var listfile = ReadFile("(listfile)");
 
 			if (listfile == null) {
 				return new List<string>();
@@ -218,28 +218,11 @@ namespace Nmpq {
 		}
 
 
-		public object ExtractSerializedData(string path, bool convertStringsToUtf8) {
-			using(var memory = new MemoryStream(ExtractFileBytes(path))) 
+		public object ReadSerializedData(string path, bool convertStringsToUtf8) {
+			using(var memory = new MemoryStream(ReadFile(path))) 
 			using(var reader = new BinaryReader(memory)) {
 				return Deserialization.ParseSerializedData(reader, convertStringsToUtf8);
 			}
-		}
-
-		public Stream OpenFile(string path) {
-			if (path == null) throw new ArgumentNullException("path");
-
-			if (HasOpenFile)
-				throw new InvalidOperationException(
-					"There is already a file open for this archive. You can only have one archive file stream open at a time.");
-
-			var blockEntry = FindBlockTableEntry(path);
-
-			if (blockEntry == null)
-				return null;
-
-			HasOpenFile = true;
-			var fileOffset = blockEntry.Value.BlockOffset + ArchiveOffset;
-			return new MpqFileStream(blockEntry.Value, _reader.BaseStream, fileOffset, () => { HasOpenFile = false; });
 		}
 	}
 }

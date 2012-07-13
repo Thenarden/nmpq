@@ -55,7 +55,6 @@
     <Compile Include="KnownFilesPropertyTests.cs" />
     <Compile Include="MultiPartFilesTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StreamTests.cs" />
     <Compile Include="ObjectMother.cs" />
     <Compile Include="TestingStreamWrapper.cs" />
     <Compile Include="TestUtil.cs" />

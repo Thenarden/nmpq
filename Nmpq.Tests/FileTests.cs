@@ -8,7 +8,7 @@ namespace Nmpq.Tests {
 		[Test]
 		public void Open_returns_data_for_specified_file_if_it_exists_in_archive() {
 			using(var archive = ObjectMother.OpenTestArchive1()) {
-				var listfile = archive.ExtractFileBytes("(listfile)");
+				var listfile = archive.ReadFile("(listfile)");
 
 				Assert.That(listfile, Is.Not.Null);
 			}
@@ -27,7 +27,7 @@ replay.sync.events
 ";
 
 			using(var archive = ObjectMother.OpenTestArchive1()) {
-				var listfile = archive.ExtractFileBytes("(listfile)");
+				var listfile = archive.ReadFile("(listfile)");
 				Assume.That(listfile, Is.Not.Null.And.Not.Empty);
 
 				var listfileContents = Encoding.UTF8.GetString(listfile);
@@ -43,7 +43,7 @@ replay.sync.events
 					  80 00 00 32 00 01 B2 02 00 04 67 6C 68 66 01 CE 01 00 02 75 32");
 
 			using(var archive = ObjectMother.OpenTestArchive1()) {
-				var file = archive.ExtractFileBytes("replay.message.events");
+				var file = archive.ReadFile("replay.message.events");
 
 				Assert.That(file, Is.EqualTo(expectedBytes));
 			}
@@ -96,7 +96,7 @@ zhTW.SC2Data\LocalizedData\GameStrings.txt
 ";
 
 			using(var archive = ObjectMother.OpenTestArchive2()) {
-				var listfile = archive.ExtractFileBytes("(listfile)");
+				var listfile = archive.ReadFile("(listfile)");
 				Assume.That(listfile, Is.Not.Null.And.Not.Empty);
 
 				var listfileContents = Encoding.UTF8.GetString(listfile);
