@@ -1,8 +1,8 @@
 using Nmpq.Parsing;
 
 namespace Nmpq {
-	public class HashTable {
-		public HashTable(HashTableEntry[] entries) {
+	public class MpqHashTable {
+		public MpqHashTable(HashTableEntry[] entries) {
 			Entries = entries;
 		}
 

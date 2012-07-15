@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Nmpq.Tests {
 	public static class ObjectMother {
-		private static MpqArchive OpenTestArchive(string path, string expectedHash) {
+		private static IMpqArchive OpenTestArchive(string path, string expectedHash) {
 			Assume.That(File.Exists(path));
 
 			var fileBytes = File.ReadAllBytes(path);
@@ -31,11 +31,11 @@ namespace Nmpq.Tests {
 			return fileBytes;
 		}
 
-		public static MpqArchive OpenTestArchive1() {
+		public static IMpqArchive OpenTestArchive1() {
 			return OpenTestArchive("TestArchives/Archive1.SC2Replay", "2gMBq3cvcyaO2PLK7QWjuiigSQE=");
 		}
 
-		public static MpqArchive OpenTestArchive2() {
+		public static IMpqArchive OpenTestArchive2() {
 			return OpenTestArchive("TestArchives/Archive2.s2ma", "CpPtnW7YaZHbKcsCXmIVwNv08BE=");
 		}
 

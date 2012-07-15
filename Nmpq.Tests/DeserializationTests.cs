@@ -6,7 +6,7 @@ namespace Nmpq.Tests {
 	[TestFixture]
 	public class DeserializationTests {
 		[Test]
-		public void Can_parsed_serialized_data_from_sc2_replay() {
+		public void Can_parse_serialized_data_from_sc2_replay() {
 			using(var archive = ObjectMother.OpenTestArchive1()) {
 				dynamic replayDetails = archive.ReadSerializedData("replay.details", true);
 

@@ -10,7 +10,7 @@ using Nmpq.Parsing;
 
 namespace Nmpq {
 	public partial class MpqArchive {
-		private void ReadUserDataHeader() {
+		private void ParseUserDataHeader() {
 			var magicString = new string(_reader.ReadChars(3));
 			var userDataIndicator = _reader.ReadByte();
 
@@ -29,13 +29,13 @@ namespace Nmpq {
 				UserDataMaxSize = _reader.ReadInt32();
 				ArchiveOffset = _reader.ReadInt32();
 
-				UserDataHeaderSize = _reader.ReadInt32();
-				UserDataHeader = _reader.ReadBytes(UserDataHeaderSize);
+				UserDataActualSize = _reader.ReadInt32();
+				UserData = _reader.ReadBytes(UserDataActualSize);
 			}
 		}
 
-		private void ReadAndValidateArchiveHeader() {
-			Seek(0);
+		private void ParseArchiveHeader() {
+			SeekToArchiveOffset(0);
 
 			ArchiveHeader = _reader.ReadStruct<ArchiveHeader>();
 
@@ -50,7 +50,7 @@ namespace Nmpq {
 		}
 
 		private IEnumerable<T> ReadTableEntires<T>(string name, int tableOffset, int numberOfEntries) {
-			Seek(tableOffset);
+			SeekToArchiveOffset(tableOffset);
 
 			var entrySize = Marshal.SizeOf(typeof(T));
 			var data = _reader.ReadBytes(entrySize * numberOfEntries);
@@ -83,7 +83,7 @@ namespace Nmpq {
 			return BlockTable[entry.Value.FileBlockIndex];
 		}
 
-		// todos: better decompression, multi-block files
+		// todos: support more decompression algorithms?
 		public byte[] ReadFile(string path) {
 			if (path == null) throw new ArgumentNullException("path");
 
@@ -101,7 +101,7 @@ namespace Nmpq {
 			if (blockEntry.Value.IsImploded)
 				throw new NotSupportedException("Imploded files are not currently supported by Nmpq.");
 
-			Seek(blockEntry.Value.BlockOffset);
+			SeekToArchiveOffset(blockEntry.Value.BlockOffset);
 
 			if (!blockEntry.Value.IsFileSingleUnit) {
 				return ReadMultiUnitFile(blockEntry.Value);
@@ -124,42 +124,14 @@ namespace Nmpq {
 			var blockData = _reader.ReadBytes(dataSize);
 
 			if (compressionFlags == CompressionFlags.Bzip2) {
-				return BZip2Decompress(blockData, 0);
+				return Compression.BZip2Decompress(blockData, 0);
 			}
 
 			if (compressionFlags == CompressionFlags.Deflated) {
-				return Deflate(blockData, 0);
+				return Compression.Deflate(blockData, 0);
 			}
 
 			throw new NotSupportedException("Currenlty only Bzip2 and Deflate compression is supported by Nmpq.");
-		}
-
-		private byte[] BZip2Decompress(byte[] input, int skip) {
-			using (var inputStream = new MemoryStream(input, skip, input.Length - skip))
-			using (var outputStream = new MemoryStream()) {
-				BZip2.Decompress(inputStream, outputStream, false);
-				return outputStream.ToArray();
-			}
-		}
-
-		private byte[] Deflate(byte[] input, int skip) {
-			// see http://george.chiramattel.com/blog/2007/09/deflatestream-block-length-does-not-match.html
-			// and possibly http://connect.microsoft.com/VisualStudio/feedback/details/97064/deflatestream-throws-exception-when-inflating-pdf-streams
-			// for more info on why we have to skip two extra bytes because of ZLIB
-			using (var inputStream = new MemoryStream(input, 2 + skip, input.Length - 2 - skip)) // skip ZLIB bytes 
-			using (var deflate = new DeflateStream(inputStream, CompressionMode.Decompress)) 
-			using (var outputStream = new MemoryStream()) {
-				var buffer = new byte[1024];
-				var read = deflate.Read(buffer, 0, buffer.Length);
-
-				while(read == buffer.Length) {
-					outputStream.Write(buffer, 0, read);
-					read = deflate.Read(buffer, 0, buffer.Length);
-				}
-
-				outputStream.Write(buffer, 0, read);
-				return outputStream.ToArray();
-			}
 		}
 
 		private byte[] ReadMultiUnitFile(BlockTableEntry blockEntry) {
@@ -181,23 +153,22 @@ namespace Nmpq {
 				var position = sectorTable[i];
 				var length = sectorTable[i + 1] - position;
 
-				Seek(position + blockEntry.BlockOffset);
+				SeekToArchiveOffset(position + blockEntry.BlockOffset);
 				var sectorData = _reader.ReadBytes(length);
 
 				if (blockEntry.IsCompressed && length < SectorSize) {
 					var compressionFlags = (CompressionFlags) sectorData[0];
 
 					if (compressionFlags == CompressionFlags.Bzip2) {
-						sectorData = BZip2Decompress(sectorData, 1);
+						sectorData = Compression.BZip2Decompress(sectorData, 1);
 					}
 					else if(compressionFlags == CompressionFlags.Deflated) {
-						sectorData = Deflate(sectorData, 1);
+						sectorData = Compression.Deflate(sectorData, 1);
 					}
 					else {
 						throw new NotSupportedException("Currenlty only Bzip2 and Deflate compression is supported by Nmpq.");
 					}
 				}
-
 
 				Array.ConstrainedCopy(sectorData, 0, result, resultPosition, sectorData.Length);
 				resultPosition += sectorData.Length;

@@ -6,13 +6,13 @@ namespace Nmpq.Tests {
 		[Test]
 		public void Can_get_max_user_data_size() {
 			using (var archive = ObjectMother.OpenTestArchive1()) {
-				Assert.That(archive.UserDataMaxSize, Is.EqualTo(512));
+				Assert.That(archive.Details.UserDataMaxSize, Is.EqualTo(512));
 			}
 		}
 		[Test]
 		public void Can_get_user_data_header_size() {
 			using (var archive = ObjectMother.OpenTestArchive1()) {
-				Assert.That(archive.UserDataHeaderSize, Is.EqualTo(60));
+				Assert.That(archive.Details.UserDataActualSize, Is.EqualTo(60));
 			}
 		}
 
@@ -21,7 +21,7 @@ namespace Nmpq.Tests {
 			var expected = TestUtil.LoadBytesFromTextFile("TestArchives/Archive1-UserDataHeader.txt");
 
 			using(var archive = ObjectMother.OpenTestArchive1()) {
-				Assert.That(archive.UserDataHeader, Is.EqualTo(expected));
+				Assert.That(archive.UserData, Is.EqualTo(expected));
 			}
 		}
 	}

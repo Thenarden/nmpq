@@ -9,7 +9,7 @@ namespace Nmpq.Tests {
 			var path = "TestArchives/Archive1.SC2Replay";
 			Assume.That(File.Exists(path));
 
-			using (var archive = MpqArchive.Open(path)) {
+			using (var archive = (MpqArchive)MpqArchive.Open(path)) {
 				var table = archive.HashTable;
 
 				Assert.That(table.Entries[0].FilePathHashA, Is.EqualTo(0xD38437CB));

@@ -42,7 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compression.cs" />
     <Compile Include="IMpqArchive.cs" />
+    <Compile Include="IMpqArchiveDetails.cs" />
     <Compile Include="MpqArchive.cs" />
     <Compile Include="MpqArchive.Parsing.cs" />
     <Compile Include="Parsing\BinaryReaderExtensions.cs" />
@@ -50,7 +52,7 @@
     <Compile Include="Parsing\BlockTableEntry.cs" />
     <Compile Include="Parsing\CompressionFlags.cs" />
     <Compile Include="Parsing\Crypto.cs" />
-    <Compile Include="HashTable.cs" />
+    <Compile Include="MpqHashTable.cs" />
     <Compile Include="Parsing\Deserialization.cs" />
     <Compile Include="Parsing\HashTableEntry.cs" />
     <Compile Include="Parsing\HashType.cs" />
