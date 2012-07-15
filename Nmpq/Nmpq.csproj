@@ -53,11 +53,11 @@
     <Compile Include="Parsing\CompressionFlags.cs" />
     <Compile Include="Parsing\Crypto.cs" />
     <Compile Include="MpqHashTable.cs" />
-    <Compile Include="Parsing\Deserialization.cs" />
+    <Compile Include="MpqSerializedData.cs" />
     <Compile Include="Parsing\HashTableEntry.cs" />
     <Compile Include="Parsing\HashType.cs" />
     <Compile Include="Parsing\ArchiveHeader.cs" />
-    <Compile Include="Parsing\SerializedDataType.cs" />
+    <Compile Include="MpqSerializedDataType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

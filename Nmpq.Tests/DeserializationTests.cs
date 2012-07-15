@@ -10,8 +10,20 @@ namespace Nmpq.Tests {
 			using(var archive = ObjectMother.OpenTestArchive1()) {
 				dynamic replayDetails = archive.ReadSerializedData("replay.details", true);
 
-				Assert.Fail();
-				//Assert.That(replayDetails, Is.Not.Null);
+				Assert.That(replayDetails, Is.Not.Null);
+				Assert.That(replayDetails[0].Length, Is.EqualTo(2));
+
+				Assert.That(replayDetails[0][0][0], Is.EqualTo("DeadBabySeal"));
+				Assert.That(replayDetails[0][0][1][2], Is.EqualTo(1));
+				Assert.That(replayDetails[0][0][1][4], Is.EqualTo(2991693));
+				Assert.That(replayDetails[0][0][2], Is.EqualTo("Zerg"));
+
+				Assert.That(replayDetails[0][1][0], Is.EqualTo("OverDrive"));
+				Assert.That(replayDetails[0][1][1][2], Is.EqualTo(1));
+				Assert.That(replayDetails[0][1][1][4], Is.EqualTo(947366));
+				Assert.That(replayDetails[0][1][2], Is.EqualTo("Terran"));
+
+				Assert.That(replayDetails[1], Is.EqualTo("Ohana LE"));
 			}
 		}
 
@@ -43,7 +55,7 @@ namespace Nmpq.Tests {
 		public void Variable_length_integers_are_deserialized_correctly(byte[] bytes, long expectedValue) {
 			using (var stream = new MemoryStream(bytes)) 
 			using (var reader = new BinaryReader(stream)) {
-				var value = Deserialization.ParseVariableLengthInteger(reader);
+				var value = MpqSerializedData.DeserializeVariableLengthInteger(reader);
 
 				Assert.That(value, Is.EqualTo(expectedValue));
 			}

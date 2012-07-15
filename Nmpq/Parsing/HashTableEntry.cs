@@ -18,7 +18,7 @@ namespace Nmpq.Parsing {
 		public readonly byte Platform;
 
 		[FieldOffset(0x0c)]
-		public readonly uint FileBlockIndex;
+		public readonly int FileBlockIndex;
 
 		private const uint EmptyMarker = 0xffffffff;
 

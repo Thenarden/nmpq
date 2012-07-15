@@ -20,7 +20,7 @@ namespace Nmpq {
 
 		public ArchiveHeader ArchiveHeader { get; private set; }
 		public MpqHashTable HashTable { get; private set; }
-		public BlockTableEntry[] BlockTable { get; private set; }
+		public IList<BlockTableEntry> BlockTable { get; private set; }
 
 		public IList<string> KnownFiles {
 			get { return _knownFiles ?? (_knownFiles = ParseListfile().AsReadOnly()); }
@@ -68,7 +68,7 @@ namespace Nmpq {
 			var hashTableEntries = ReadTableEntires<HashTableEntry>("(hash table)", ArchiveHeader.HashTableOffset, ArchiveHeader.HashTableEntryCount);
 			var blockTableEntries = ReadTableEntires<BlockTableEntry>("(block table)", ArchiveHeader.BlockTableOffset, ArchiveHeader.BlockTableEntryCount);
 
-			BlockTable = blockTableEntries.ToArray();
+			BlockTable = blockTableEntries.ToList().AsReadOnly();
 			HashTable = new MpqHashTable(hashTableEntries.ToArray());
 		}
 		

@@ -1,10 +1,11 @@
+using System.Collections.Generic;
 using Nmpq.Parsing;
 
 namespace Nmpq {
 	public interface IMpqArchiveDetails {
 		ArchiveHeader ArchiveHeader { get; }
 		MpqHashTable HashTable { get; }
-		BlockTableEntry[] BlockTable { get;  }
+		IList<BlockTableEntry> BlockTable { get;  }
 
 		int SectorSize { get; }
 		int ArchiveOffset { get; }

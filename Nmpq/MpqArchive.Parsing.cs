@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using ICSharpCode.SharpZipLib.BZip2;
 using Nmpq.Parsing;
 
 namespace Nmpq {
@@ -200,7 +198,7 @@ namespace Nmpq {
 
 			using(var memory = new MemoryStream(file)) 
 			using(var reader = new BinaryReader(memory)) {
-				return Deserialization.ParseSerializedData(reader, convertStringsToUtf8);
+				return MpqSerializedData.Deserialize(reader, convertStringsToUtf8);
 			}
 		}
 	}

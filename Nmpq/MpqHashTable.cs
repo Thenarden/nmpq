@@ -1,12 +1,14 @@
+using System.Collections.Generic;
+using System.Linq;
 using Nmpq.Parsing;
 
 namespace Nmpq {
 	public class MpqHashTable {
-		public MpqHashTable(HashTableEntry[] entries) {
-			Entries = entries;
+		public MpqHashTable(IEnumerable<HashTableEntry> entries) {
+			Entries = entries.ToList().AsReadOnly();
 		}
 
-		public HashTableEntry[] Entries { get; private set; }
+		public IList<HashTableEntry> Entries { get; private set; }
 
 		public HashTableEntry? FindEntry(ulong hashA, ulong hashB) {
 			foreach(var entry in Entries) {

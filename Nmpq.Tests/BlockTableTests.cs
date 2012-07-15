@@ -9,7 +9,7 @@ namespace Nmpq.Tests {
 			using(var archive = (MpqArchive)ObjectMother.OpenTestArchive1()) {
 				var table = archive.BlockTable;
 
-				Assert.That(table, Has.Length.EqualTo(10));
+				Assert.That(table.Count, Is.EqualTo(10));
 
 				var expectedFlags = BlockFlags.IsFile | BlockFlags.FileIsCompressed | BlockFlags.FileIsSingleUnit;
 				Assert.That(table[0].BlockOffset, Is.EqualTo(0x0000002C));
