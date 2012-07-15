@@ -10,8 +10,6 @@ using Nmpq.Parsing;
 
 namespace Nmpq {
 	public partial class MpqArchive {
-		public bool HasOpenFile { get; private set; }
-
 		private void ReadUserDataHeader() {
 			var magicString = new string(_reader.ReadChars(3));
 			var userDataIndicator = _reader.ReadByte();
@@ -22,14 +20,17 @@ namespace Nmpq {
 			// 0x1a as the last byte of the magic number indicates that there is no user data section
 			if (userDataIndicator == 0x1a) {
 				ArchiveOffset = 0;
-				UserDataSize = 0;
+				UserDataMaxSize = 0;
 			}
 
 			// 0x1b as the last byte of the magic number indicates that there IS a user data section
 			//	we have to skip over it to get to the archive header
 			if (userDataIndicator == 0x1b) {
-				UserDataSize = _reader.ReadInt32();
+				UserDataMaxSize = _reader.ReadInt32();
 				ArchiveOffset = _reader.ReadInt32();
+
+				UserDataHeaderSize = _reader.ReadInt32();
+				UserDataHeader = _reader.ReadBytes(UserDataHeaderSize);
 			}
 		}
 

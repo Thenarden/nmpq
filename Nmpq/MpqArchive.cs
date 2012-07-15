@@ -8,11 +8,21 @@ using Nmpq.Parsing;
 namespace Nmpq {
 	public partial class MpqArchive : IMpqArchive, IDisposable {
 		public int ArchiveOffset { get; set; }
-		public int UserDataSize { get; set; }
+
+		public int UserDataMaxSize { get; set; }
+		public byte[] UserDataHeader { get; set; }
+
+		// I am not sure what this field actually means, but my MPQ editor 
+		//		says it exists at offset 0x0c in the file. That also matches
+		//		what I am seeing elsewhere, though no reference appears in
+		//		the canonical online MPQ docs here: http://wiki.devklog.net/index.php?title=MPQ_format_specification#User_Data
+		public int UserDataHeaderSize { get; set; } 
+
 		public ArchiveHeader ArchiveHeader { get; set; }
 		public HashTable HashTable { get; set; }
 		public BlockTableEntry[] BlockTable { get; set; }
 		public int SectorSize { get; set; }
+
 
 		private BinaryReader _reader;
 		private bool _cleanupStreamOnDispose;

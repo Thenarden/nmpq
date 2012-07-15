@@ -58,6 +58,7 @@
     <Compile Include="ObjectMother.cs" />
     <Compile Include="TestingStreamWrapper.cs" />
     <Compile Include="TestUtil.cs" />
+    <Compile Include="UserDataTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TestArchives\Archive1.SC2Replay">
@@ -75,6 +76,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestArchives\Archive1-UserDataHeader.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestArchives\Archive2-Minimap.tga">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
