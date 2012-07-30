@@ -13,7 +13,7 @@ namespace Nmpq {
 			var userDataIndicator = _reader.ReadByte();
 
 			if (magicString != "MPQ" || (userDataIndicator != 0x1a && userDataIndicator != 0x1b))
-				throw new Exception("Invalid MPQ header. This is probably not an MPQ archive. (Invalid magic)");
+				throw new MpqParsingException("Invalid MPQ header. This is probably not an MPQ archive. (Invalid magic)");
 
 			// 0x1a as the last byte of the magic number indicates that there is no user data section
 			if (userDataIndicator == 0x1a) {
@@ -38,13 +38,13 @@ namespace Nmpq {
 			ArchiveHeader = _reader.ReadStruct<ArchiveHeader>();
 
 			if (!ArchiveHeader.IsMagicValid)
-				throw new Exception("Invalid MPQ header, this is probably not an MPQ archive. (Invalid magic)");
+				throw new MpqParsingException("Invalid MPQ header, this is probably not an MPQ archive. (Invalid magic)");
 
 			if (!ArchiveHeader.IsBurningCrusadeFormat)
-				throw new Exception("Invalid MPQ format. Must be '1'.");
+				throw new MpqParsingException("Invalid MPQ format. Must be '1'.");
 
 			if (ArchiveHeader.HeaderSize != 0x2c)
-				throw new Exception("Unexpected header size for specified MPQ format.");
+				throw new MpqParsingException("Unexpected header size for specified MPQ format.");
 		}
 
 		private IEnumerable<T> ReadTableEntires<T>(string name, int tableOffset, int numberOfEntries) {
