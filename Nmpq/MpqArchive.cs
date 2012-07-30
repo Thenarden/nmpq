@@ -12,10 +12,10 @@ namespace Nmpq {
 		}
 
 		public byte[] UserData { get; private set; }
+		public int UserDataReservedSize { get; private set; }
+		public int UserDataSize { get; private set; }
 
 		public int ArchiveOffset { get; private set; }
-		public int UserDataMaxSize { get; private set; }
-		public int UserDataActualSize { get; private set; }
 		public int SectorSize { get; private set; }
 
 		public ArchiveHeader ArchiveHeader { get; private set; }

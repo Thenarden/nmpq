@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 
 namespace Nmpq {
-	public interface IMpqArchive : IDisposable {
-		byte[] UserData { get; }
+	public interface IMpqArchive : IDisposable, IMpqUserData {
 		IList<string> KnownFiles { get; }
 
 		byte[] ReadFile(string path);

@@ -18,17 +18,17 @@ namespace Nmpq {
 			// 0x1a as the last byte of the magic number indicates that there is no user data section
 			if (userDataIndicator == 0x1a) {
 				ArchiveOffset = 0;
-				UserDataMaxSize = 0;
+				UserDataReservedSize = 0;
 			}
 
 			// 0x1b as the last byte of the magic number indicates that there IS a user data section
 			//	we have to skip over it to get to the archive header
 			if (userDataIndicator == 0x1b) {
-				UserDataMaxSize = _reader.ReadInt32();
+				UserDataReservedSize = _reader.ReadInt32();
 				ArchiveOffset = _reader.ReadInt32();
 
-				UserDataActualSize = _reader.ReadInt32();
-				UserData = _reader.ReadBytes(UserDataActualSize);
+				UserDataSize = _reader.ReadInt32();
+				UserData = _reader.ReadBytes(UserDataSize);
 			}
 		}
 

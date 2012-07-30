@@ -9,8 +9,5 @@ namespace Nmpq {
 
 		int SectorSize { get; }
 		int ArchiveOffset { get; }
-
-		int UserDataMaxSize { get; }
-		int UserDataActualSize { get; }
 	}
 }
