@@ -2,7 +2,7 @@ using NUnit.Framework;
 
 namespace Nmpq.Tests {
 	[TestFixture]
-	public class MultiPartFilesTestFixture {
+	public class MultiPartFilesTests {
 		[Test]
 		public void Can_read_multipart_file() {
 			var expected = ObjectMother.GetTestArchive2Minimap();
