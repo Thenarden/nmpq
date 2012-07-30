@@ -8,6 +8,5 @@ namespace Nmpq {
 		IList<BlockTableEntry> BlockTable { get;  }
 
 		int SectorSize { get; }
-		int ArchiveOffset { get; }
 	}
 }

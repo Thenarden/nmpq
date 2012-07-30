@@ -1,5 +1,6 @@
 namespace Nmpq {
-	public interface IMpqUserData {
+	public interface IMpqUserDataHeader {
+		int ArchiveOffset { get; }
 		byte[] UserData { get; }
 		int UserDataReservedSize { get; }
 		int UserDataSize { get; }

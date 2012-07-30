@@ -8,28 +8,36 @@ using Nmpq.Parsing;
 
 namespace Nmpq {
 	public partial class MpqArchive {
-		private void ParseUserDataHeader() {
-			var magicString = new string(_reader.ReadChars(3));
-			var userDataIndicator = _reader.ReadByte();
+		private static MpqUserDataHeader ParseUserDataHeader(BinaryReader reader) {
+			var header = new MpqUserDataHeader();
+
+			var magicString = new string(reader.ReadChars(3));
+			var userDataIndicator = reader.ReadByte();
 
 			if (magicString != "MPQ" || (userDataIndicator != 0x1a && userDataIndicator != 0x1b))
-				throw new MpqParsingException("Invalid MPQ header. This is probably not an MPQ archive. (Invalid magic)");
+				return null;
 
 			// 0x1a as the last byte of the magic number indicates that there is no user data section
 			if (userDataIndicator == 0x1a) {
-				ArchiveOffset = 0;
-				UserDataReservedSize = 0;
+				header.HasUserData = false;
+
+				header.ArchiveOffset = 0;
+				header.UserDataReservedSize = 0;
 			}
 
 			// 0x1b as the last byte of the magic number indicates that there IS a user data section
 			//	we have to skip over it to get to the archive header
 			if (userDataIndicator == 0x1b) {
-				UserDataReservedSize = _reader.ReadInt32();
-				ArchiveOffset = _reader.ReadInt32();
+				header.HasUserData = true;
 
-				UserDataSize = _reader.ReadInt32();
-				UserData = _reader.ReadBytes(UserDataSize);
+				header.UserDataReservedSize = reader.ReadInt32();
+				header.ArchiveOffset = reader.ReadInt32();
+
+				header.UserDataSize = reader.ReadInt32();
+				header.UserData = reader.ReadBytes(header.UserDataSize);
 			}
+
+			return header;
 		}
 
 		private void ParseArchiveHeader() {

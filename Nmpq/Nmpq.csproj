@@ -45,10 +45,11 @@
     <Compile Include="Compression.cs" />
     <Compile Include="IMpqArchive.cs" />
     <Compile Include="IMpqArchiveDetails.cs" />
-    <Compile Include="IMpqUserData.cs" />
+    <Compile Include="IMpqUserDataHeader.cs" />
     <Compile Include="MpqArchive.cs" />
     <Compile Include="MpqArchive.Parsing.cs" />
     <Compile Include="MpqParsingException.cs" />
+    <Compile Include="MpqUserDataHeader.cs" />
     <Compile Include="Parsing\BinaryReaderExtensions.cs" />
     <Compile Include="Parsing\BlockFlags.cs" />
     <Compile Include="Parsing\BlockTableEntry.cs" />

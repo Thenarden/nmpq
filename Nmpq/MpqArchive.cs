@@ -11,13 +11,9 @@ namespace Nmpq {
 			get { return this; }
 		}
 
-		public byte[] UserData { get; private set; }
-		public int UserDataReservedSize { get; private set; }
-		public int UserDataSize { get; private set; }
-
-		public int ArchiveOffset { get; private set; }
 		public int SectorSize { get; private set; }
 
+		public IMpqUserDataHeader UserDataHeader { get; private set; }
 		public ArchiveHeader ArchiveHeader { get; private set; }
 		public MpqHashTable HashTable { get; private set; }
 		public IList<BlockTableEntry> BlockTable { get; private set; }
@@ -31,6 +27,27 @@ namespace Nmpq {
 		private IList<string> _knownFiles;
 
 		protected MpqArchive() {}
+
+		public static IMpqUserDataHeader ParseUserDataHeader(string path) {
+			if (path == null) throw new ArgumentNullException("path");
+
+			using (var stream = File.OpenRead(path))
+				return ParseUserDataHeader(stream);
+		}
+
+		public static IMpqUserDataHeader ParseUserDataHeader(byte[] data) {
+			if (data == null) throw new ArgumentNullException("data");
+
+			using (var stream = new MemoryStream(data))
+				return ParseUserDataHeader(stream);
+		}
+
+		public static IMpqUserDataHeader ParseUserDataHeader(Stream stream) {
+			if (stream == null) throw new ArgumentNullException("stream");
+
+			using (var reader = new BinaryReader(stream))
+				return ParseUserDataHeader(reader);
+		}
 
 		public static IMpqArchive Open(string path) {
 			if (path == null) throw new ArgumentNullException("path");
@@ -60,7 +77,11 @@ namespace Nmpq {
 			_reader = new BinaryReader(stream, Encoding.UTF8);
 			_cleanupStreamOnDispose = cleanupStreamOnDispose;
 
-			ParseUserDataHeader();
+			UserDataHeader = ParseUserDataHeader(_reader);
+
+			if (UserDataHeader == null) 
+				throw new MpqParsingException("Invalid MPQ header. This is probably not an MPQ archive.");
+
 			ParseArchiveHeader();
 
 			SectorSize = 512 << ArchiveHeader.SectorSizeShift;
@@ -74,7 +95,7 @@ namespace Nmpq {
 		
 		// seeks to a stream posistion relative to the start of the archive
 		private void SeekToArchiveOffset(long offset) {
-			_reader.BaseStream.Seek(ArchiveOffset + offset, SeekOrigin.Begin);
+			_reader.BaseStream.Seek(UserDataHeader.ArchiveOffset + offset, SeekOrigin.Begin);
 		}
 
 		public void Dispose() {
