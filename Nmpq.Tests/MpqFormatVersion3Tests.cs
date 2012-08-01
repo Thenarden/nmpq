@@ -58,5 +58,14 @@ replay.sync.events
 				Assert.That(file, Is.EqualTo(expected));
 			}
 		}
+
+		[Test]
+		public void Can_deserialize_data() {
+			using (var archive = ObjectMother.OpenTestVersion3Mpq()) {
+				var data = archive.ReadSerializedData("replay.details", true);
+
+				Assert.That(data, Is.Not.Null);
+			}
+		}
 	}
 }

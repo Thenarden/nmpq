@@ -38,7 +38,15 @@ namespace Nmpq {
 			}
 
 			if (type == MpqSerializedDataType.Array) {
-				reader.ReadBytes(2);	// arrays are always followed by the bytes 0x01 0x00, we skip them
+				var flag = reader.ReadByte();
+
+				// first observed in SC2 Patch 1.5:
+				//	if the first byte following the array is 0, then the array is empty
+				if (flag == 0)
+					return new object[0];
+
+				// this byte has always been observed to be 0, not sure what it means
+				reader.ReadByte();
 
 				var length = DeserializeVariableLengthInteger(reader);
 				var array = new object[length];
