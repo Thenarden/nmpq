@@ -42,5 +42,9 @@ namespace Nmpq.Tests {
 		public static byte[] GetTestArchive2Minimap() {
 			return ReadTestFile("TestArchives/Archive2-Minimap.tga", "/gD9VXczfO3PZsJjIC0eO7VbuTg=");
 		}
+
+		public static IMpqArchive OpenTestVersion3Mpq() {
+			return OpenTestArchive("TestArchives/V3/MpqVersion3.SC2Replay", "FbiFU8Zf1Yb2eOmnma2/wkFnpEA=");
+		}
 	}
 }

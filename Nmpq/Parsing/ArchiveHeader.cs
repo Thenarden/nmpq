@@ -13,10 +13,6 @@ namespace Nmpq.Parsing {
 			}
 		}
 
-		public bool IsBurningCrusadeFormat {
-			get { return FormatVersion == 1; }
-		}
-
 		[FieldOffset(0x00)]
 		public int Magic;
 

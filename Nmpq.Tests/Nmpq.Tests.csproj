@@ -53,6 +53,7 @@
     <Compile Include="HashTableTests.cs" />
     <Compile Include="ArchiveHeaderTests.cs" />
     <Compile Include="KnownFilesPropertyTests.cs" />
+    <Compile Include="MpqFormatVersion3Tests.cs" />
     <Compile Include="MultiPartFilesTests.cs" />
     <Compile Include="ParseUserDataTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -62,11 +63,26 @@
     <Compile Include="UserDataTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="TestArchives\V3\MpqVersion3.SC2Replay">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="TestArchives\Archive1.SC2Replay">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
     <None Include="TestArchives\Archive2.s2ma">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestArchives\V3\replay.attributes.events">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestArchives\V3\replay.details">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestArchives\V3\replay.initData">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestArchives\V3\replay.message.events">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

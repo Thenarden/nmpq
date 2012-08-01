@@ -48,11 +48,16 @@ namespace Nmpq {
 			if (!ArchiveHeader.IsMagicValid)
 				throw new MpqParsingException("Invalid MPQ header, this is probably not an MPQ archive. (Invalid magic)");
 
-			if (!ArchiveHeader.IsBurningCrusadeFormat)
-				throw new MpqParsingException("Invalid MPQ format. Must be '1'.");
+			if ((ArchiveHeader.FormatVersion == 1 && ArchiveHeader.HeaderSize != 0x2c)
+				|| (ArchiveHeader.FormatVersion == 3 && ArchiveHeader.HeaderSize != 0xD0)) {
+				throw new MpqParsingException(
+					string.Format(
+						"Unexpected header size for specified MPQ format. (FormatVersion: {0}, HeaderSize: 0x{1:X2})",
+					              ArchiveHeader.FormatVersion, ArchiveHeader.HeaderSize));
+			}
 
-			if (ArchiveHeader.HeaderSize != 0x2c)
-				throw new MpqParsingException("Unexpected header size for specified MPQ format.");
+			if (ArchiveHeader.FormatVersion != 1 && ArchiveHeader.FormatVersion != 3)
+				throw new MpqParsingException("Invalid MPQ format. Must be '1' or '3'.");
 		}
 
 		private IEnumerable<T> ReadTableEntires<T>(string name, int tableOffset, int numberOfEntries) {
