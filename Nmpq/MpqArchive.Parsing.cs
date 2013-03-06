@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Nmpq.Parsing;
+using Nmpq.Util;
 
 namespace Nmpq
 {
@@ -223,23 +224,6 @@ namespace Nmpq
             var contents = Encoding.UTF8.GetString(listfile);
             var entries = contents.Split(new[] {';', '\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
             return entries.ToList();
-        }
-
-
-        public object ReadSerializedData(string path, bool convertStringsToUtf8)
-        {
-            if (path == null) throw new ArgumentNullException("path");
-
-            var file = ReadFile(path);
-
-            if (file == null)
-                return null;
-
-            using (var memory = new MemoryStream(file))
-            using (var reader = new BinaryReader(memory))
-            {
-                return MpqSerializedData.Deserialize(reader, convertStringsToUtf8);
-            }
         }
     }
 }

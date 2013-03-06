@@ -1,5 +1,6 @@
 using System.IO;
 using NUnit.Framework;
+using Nmpq.Util;
 
 namespace Nmpq.Tests
 {

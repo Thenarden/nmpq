@@ -3,10 +3,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Nmpq
+namespace Nmpq.Util
 {
     public static class MpqSerializedData
     {
+        public static object ReadSerializedData(this IMpqArchive archive, string path, bool convertStringsToUtf8)
+        {
+            if (archive == null) throw new ArgumentNullException("archive");
+
+            var file = archive.ReadFile(path);
+
+            if (file == null)
+                return null;
+
+            using (var memory = new MemoryStream(file))
+            using (var reader = new BinaryReader(memory))
+            {
+                return Deserialize(reader, convertStringsToUtf8);
+            }
+        }
+
         public static object Deserialize(byte[] data, bool convertStringsToUtf8)
         {
             if (data == null) throw new ArgumentNullException("data");

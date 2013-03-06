@@ -1,4 +1,4 @@
-namespace Nmpq
+namespace Nmpq.Util
 {
     public enum MpqSerializedDataType : byte
     {

@@ -8,7 +8,6 @@ namespace Nmpq
         IList<string> KnownFiles { get; }
 
         byte[] ReadFile(string path);
-        object ReadSerializedData(string path, bool convertStringsToUtf8);
 
         IMpqArchiveDetails Details { get; }
         IMpqUserDataHeader UserDataHeader { get; }
