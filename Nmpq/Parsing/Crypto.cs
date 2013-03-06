@@ -2,7 +2,7 @@ using System;
 
 namespace Nmpq.Parsing
 {
-    public static class Crypto
+    static class Crypto
     {
         private static readonly uint[] CryptTable = new uint[0x500];
 

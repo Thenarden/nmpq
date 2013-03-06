@@ -1,6 +1,6 @@
 namespace Nmpq
 {
-    internal class MpqUserDataHeader : IMpqUserDataHeader
+    class MpqUserDataHeader : IMpqUserDataHeader
     {
         public bool HasUserData { get; set; }
         public int ArchiveOffset { get; set; }

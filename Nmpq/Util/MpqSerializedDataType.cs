@@ -1,6 +1,6 @@
 namespace Nmpq.Util
 {
-    public enum MpqSerializedDataType : byte
+    enum MpqSerializedDataType : byte
     {
         BinaryString = 2,
         Array = 4,

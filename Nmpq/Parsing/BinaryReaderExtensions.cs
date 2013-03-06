@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace Nmpq.Parsing
 {
-    public static class BinaryReaderExtensions
+    static class BinaryReaderExtensions
     {
         public static T ReadStruct<T>(this BinaryReader reader)
         {

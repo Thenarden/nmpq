@@ -4,7 +4,7 @@ using ICSharpCode.SharpZipLib.BZip2;
 
 namespace Nmpq
 {
-    internal static class Compression
+    static class Compression
     {
         public static byte[] BZip2Decompress(byte[] input, int skip)
         {

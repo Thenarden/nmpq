@@ -3,7 +3,7 @@ using System;
 namespace Nmpq.Parsing
 {
     [Flags]
-    public enum CompressionFlags : byte
+    enum CompressionFlags : byte
     {
         HuffmanEncoded = 0x01,
         Deflated = 0x02,
