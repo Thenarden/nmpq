@@ -1,6 +1,8 @@
 Nmpq - A Fully-Managed C# MPQ Parser
 ==================================
 
+####[Binaries can be found here.](https://s3.amazonaws.com/nmpq/Nmpq-binaries.zip "Click for some binaries you lazy punk :)")
+
 Rationale for a new MPQ parser
 ------------------------------
 
