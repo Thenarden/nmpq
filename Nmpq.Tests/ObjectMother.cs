@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using NUnit.Framework;
@@ -39,35 +38,6 @@ namespace Nmpq.Tests {
 		public static IMpqArchive OpenTestArchive2() {
 			return OpenTestArchive("TestArchives/Archive2.s2ma", "CpPtnW7YaZHbKcsCXmIVwNv08BE=");
 		}
-
-        public static IMpqArchive OpenTestArchive(string filename)
-        {
-            const string dir = "TestArchives";
-
-            var path = Path.Combine(dir, filename);
-            var expectedHash = Hashes[path];
-            return OpenTestArchive(path, expectedHash);
-        }
-
-        private static readonly IDictionary<string, string> Hashes = new Dictionary<string, string> (StringComparer.OrdinalIgnoreCase)
-                                                                         {
-                                                                             { "TestArchives\\Archive1.SC2Replay",  "2gMBq3cvcyaO2PLK7QWjuiigSQE=" },
-                                                                             { "TestArchives\\Archive2.s2ma",       "CpPtnW7YaZHbKcsCXmIVwNv08BE=" },
-                                                                             { "TestArchives\\Archive3.SC2Replay",  "/QMroQqb+v3kIpqeaDaIr1hbJIQ=" },
-                                                                         };
-
-	    public static ICollection<TestCaseData> AllArchives
-	    {
-	        get
-	        {
-                return new[]
-                           {
-                               new TestCaseData("Archive1.SC2Replay"), 
-                               new TestCaseData("Archive2.s2ma"), 
-                               new TestCaseData("Archive3.SC2Replay")
-                           };
-	        }
-	    }
 
 		public static byte[] GetTestArchive2Minimap() {
 			return ReadTestFile("TestArchives/Archive2-Minimap.tga", "/gD9VXczfO3PZsJjIC0eO7VbuTg=");

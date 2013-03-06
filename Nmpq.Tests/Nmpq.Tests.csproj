@@ -63,9 +63,6 @@
     <Compile Include="UserDataTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="TestArchives\Archive3.SC2Replay">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="TestArchives\V3\MpqVersion3.SC2Replay">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
