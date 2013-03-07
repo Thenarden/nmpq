@@ -45,7 +45,7 @@ Contributing
 ------------
 
 #### Testing
-Honestly, the easiest way to can contribute is to send me files that Nmpq can't successfully parse. All of the MPQ files that I regularly work with parse perfectly, but I'm only using a limited subset of the possible MPQ configurations.
+Honestly, the easiest way to contribute is to send me files that Nmpq can't successfully parse. All of the MPQ files that I regularly work with parse perfectly, but I'm only using a limited subset of the possible MPQ configurations.
 
 
 #### Code
