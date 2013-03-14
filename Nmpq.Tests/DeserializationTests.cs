@@ -17,14 +17,14 @@ namespace Nmpq.Tests
                 Assert.That(replayDetails, Is.Not.Null);
                 Assert.That(replayDetails[0].Length, Is.EqualTo(2));
 
-                Assert.That(replayDetails[0][0][0], Is.EqualTo("DeadBabySeal"));
+                Assert.That(replayDetails[0][0][0], Is.EqualTo("[LGS]<sp/>LuIsCoBrA"));
                 Assert.That(replayDetails[0][0][1][2], Is.EqualTo(1));
-                Assert.That(replayDetails[0][0][1][4], Is.EqualTo(2991693));
+                Assert.That(replayDetails[0][0][1][4], Is.EqualTo(1871860));
                 Assert.That(replayDetails[0][0][2], Is.EqualTo("Zerg"));
 
-                Assert.That(replayDetails[0][1][0], Is.EqualTo("LulsCoBrA"));
+                Assert.That(replayDetails[0][1][0], Is.EqualTo("[WOOT]<sp/>DeadBabySeal"));
                 Assert.That(replayDetails[0][1][1][2], Is.EqualTo(1));
-                Assert.That(replayDetails[0][1][1][4], Is.EqualTo(947366));
+                Assert.That(replayDetails[0][1][1][4], Is.EqualTo(2991693));
                 Assert.That(replayDetails[0][1][2], Is.EqualTo("Zerg"));
 
                 Assert.That(replayDetails[1], Is.EqualTo("Whirlwind LE"));

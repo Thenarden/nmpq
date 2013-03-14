@@ -86,17 +86,19 @@ namespace Nmpq.Util
 
                         if (singleElementType != 0)
                         {
-                            return new object[] { Deserialize(reader, convertStringsToUtf8) };
+                            return new [] { Deserialize((Starcraft2SerializedDataType)singleElementType, reader, convertStringsToUtf8) };
+                        }
+                        else
+                        {
+                            var length = DeserializeVariableLengthInteger(reader);
+                            var array = new object[length];
+
+                            for (var i = 0; i < length; i++)
+                                array[i] = Deserialize(reader, convertStringsToUtf8);
+
+                            return array;                            
                         }
 
-
-                        var length = DeserializeVariableLengthInteger(reader);
-                        var array = new object[length];
-
-                        for (var i = 0; i < length; i++)
-                            array[i] = Deserialize(reader, convertStringsToUtf8);
-
-                        return array;
                     }
                 case Starcraft2SerializedDataType.Map:
                     {
