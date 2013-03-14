@@ -10,6 +10,8 @@ namespace Nmpq.Util
     /// 
     /// This will probably be moved out to a separate library at some point, since it's
     /// not actually part of the core MPQ spec.
+    /// 
+    /// More information about the data format can be found at http://www.teamliquid.net/forum/viewmessage.php?topic_id=117260&currentpage=3#45
     /// </summary>
     public static class Starcraft2SerializedDataExtensions
     {
@@ -100,7 +102,7 @@ namespace Nmpq.Util
                 return dict;
             }
 
-            throw new NotSupportedException(
+            throw new MpqParsingException(
                 string.Format("Serialized data with type flag '{0}' is not supported.", (byte) type));
         }
 

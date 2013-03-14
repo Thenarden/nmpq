@@ -68,5 +68,17 @@ namespace Nmpq.Tests
                 Assert.That(value, Is.EqualTo(expectedValue));
             }
         }
+
+        [Test]
+        public void Unknown_data_type_causes_MpqParsingException()
+        {
+            var bytes = new byte[] {0xFF};
+            using (var stream = new MemoryStream(bytes))
+            using (var reader = new BinaryReader(stream))
+            {
+                Assert.Throws<MpqParsingException>(
+                    () => Starcraft2SerializedDataExtensions.Deserialize(reader, false));
+            }
+        }
     }
 }
