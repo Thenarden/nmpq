@@ -85,6 +85,9 @@
     <None Include="TestArchives\V3\replay.message.events">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="TestArchives\HotS_Replay.SC2Replay">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nmpq\Nmpq.csproj">
