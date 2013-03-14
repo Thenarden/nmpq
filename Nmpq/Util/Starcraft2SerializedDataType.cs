@@ -1,6 +1,6 @@
 namespace Nmpq.Util
 {
-    enum MpqSerializedDataType : byte
+    enum Starcraft2SerializedDataType : byte
     {
         BinaryString = 2,
         Array = 4,

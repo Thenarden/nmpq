@@ -5,7 +5,13 @@ using System.Text;
 
 namespace Nmpq.Util
 {
-    public static class MpqSerializedData
+    /// <summary>
+    /// Parses Starcraft 2's JSON-like data format, which is used within replay files.
+    /// 
+    /// This will probably be moved out to a separate library at some point, since it's
+    /// not actually part of the core MPQ spec.
+    /// </summary>
+    public static class Starcraft2SerializedDataExtensions
     {
         public static object ReadSerializedData(this IMpqArchive archive, string path, bool convertStringsToUtf8)
         {
@@ -36,18 +42,18 @@ namespace Nmpq.Util
         {
             if (reader == null) throw new ArgumentNullException("reader");
 
-            var type = (MpqSerializedDataType) reader.ReadByte();
+            var type = (Starcraft2SerializedDataType) reader.ReadByte();
 
-            if (type == MpqSerializedDataType.SingleByteInteger)
+            if (type == Starcraft2SerializedDataType.SingleByteInteger)
                 return (int) reader.ReadByte();
 
-            if (type == MpqSerializedDataType.FourByteInteger)
+            if (type == Starcraft2SerializedDataType.FourByteInteger)
                 return reader.ReadInt32();
 
-            if (type == MpqSerializedDataType.VariableLengthInteger)
+            if (type == Starcraft2SerializedDataType.VariableLengthInteger)
                 return DeserializeVariableLengthInteger(reader);
 
-            if (type == MpqSerializedDataType.BinaryString)
+            if (type == Starcraft2SerializedDataType.BinaryString)
             {
                 var length = DeserializeVariableLengthInteger(reader);
                 var bytes = reader.ReadBytes((int) length);
@@ -58,7 +64,7 @@ namespace Nmpq.Util
                 return bytes;
             }
 
-            if (type == MpqSerializedDataType.Array)
+            if (type == Starcraft2SerializedDataType.Array)
             {
                 var flag = reader.ReadByte();
 
@@ -79,7 +85,7 @@ namespace Nmpq.Util
                 return array;
             }
 
-            if (type == MpqSerializedDataType.Map)
+            if (type == Starcraft2SerializedDataType.Map)
             {
                 var length = DeserializeVariableLengthInteger(reader);
                 var dict = new Dictionary<long, object>();

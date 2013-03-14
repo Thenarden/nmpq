@@ -63,7 +63,7 @@ namespace Nmpq.Tests
             using (var stream = new MemoryStream(bytes))
             using (var reader = new BinaryReader(stream))
             {
-                var value = MpqSerializedData.DeserializeVariableLengthInteger(reader);
+                var value = Starcraft2SerializedDataExtensions.DeserializeVariableLengthInteger(reader);
 
                 Assert.That(value, Is.EqualTo(expectedValue));
             }

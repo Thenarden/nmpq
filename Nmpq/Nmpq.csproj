@@ -60,8 +60,8 @@
     <Compile Include="Parsing\HashType.cs" />
     <Compile Include="Parsing\ArchiveHeader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util\MpqSerializedData.cs" />
-    <Compile Include="Util\MpqSerializedDataType.cs" />
+    <Compile Include="Util\Starcraft2SerializedDataExtensions.cs" />
+    <Compile Include="Util\Starcraft2SerializedDataType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
