@@ -13,7 +13,7 @@ namespace Nmpq.Util
     /// 
     /// More information about the data format can be found at http://www.teamliquid.net/forum/viewmessage.php?topic_id=117260&currentpage=3#45
     /// </summary>
-    public static class Starcraft2SerializedDataExtensions
+    public static class Starcraft2SerializedData
     {
         public static object ReadSerializedData(this IMpqArchive archive, string path, bool convertStringsToUtf8)
         {
