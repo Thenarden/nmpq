@@ -8,6 +8,30 @@ namespace Nmpq.Tests
     public class DeserializationTests
     {
         [Test]
+        public void Can_parse_serialized_data_from_heart_of_the_swarm_replay()
+        {
+            using (var archive = ObjectMother.OpenHotsReplay())
+            {
+                dynamic replayDetails = archive.ReadSerializedData("replay.details", true);
+
+                Assert.That(replayDetails, Is.Not.Null);
+                Assert.That(replayDetails[0].Length, Is.EqualTo(2));
+
+                Assert.That(replayDetails[0][0][0], Is.EqualTo("DeadBabySeal"));
+                Assert.That(replayDetails[0][0][1][2], Is.EqualTo(1));
+                Assert.That(replayDetails[0][0][1][4], Is.EqualTo(2991693));
+                Assert.That(replayDetails[0][0][2], Is.EqualTo("Zerg"));
+
+                Assert.That(replayDetails[0][1][0], Is.EqualTo("LulsCoBrA"));
+                Assert.That(replayDetails[0][1][1][2], Is.EqualTo(1));
+                Assert.That(replayDetails[0][1][1][4], Is.EqualTo(947366));
+                Assert.That(replayDetails[0][1][2], Is.EqualTo("Zerg"));
+
+                Assert.That(replayDetails[1], Is.EqualTo("Whirlwind LE"));
+            }
+        }
+
+        [Test]
         public void Can_parse_serialized_data_from_sc2_replay()
         {
             using (var archive = ObjectMother.OpenTestArchive1())

@@ -56,5 +56,10 @@ namespace Nmpq.Tests
         {
             return OpenTestArchive("TestArchives/V3/MpqVersion3.SC2Replay", "FbiFU8Zf1Yb2eOmnma2/wkFnpEA=");
         }
+
+        public static IMpqArchive OpenHotsReplay()
+        {
+            return OpenTestArchive("TestArchives/HotS_Replay.SC2Replay", "lClN4TkJvfNZ0KY51oqHgkq3aag=");
+        }
     }
 }
