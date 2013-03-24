@@ -13,4 +13,8 @@
     <copyright>Copyright 2013 Nick Aceves</copyright>
     <tags>MPQ Nmpq</tags>
   </metadata>
+  <files>
+    <file src="build\Nmpq.dll" target="lib\net40\" />
+    <file src="..\LICENSE" target="lib\" />
+  </files>
 </package>

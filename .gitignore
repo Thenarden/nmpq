@@ -9,4 +9,4 @@ TestResults
 _Resharper.*
 
 
-/build
+\nuget\build
