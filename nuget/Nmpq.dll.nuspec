@@ -14,7 +14,6 @@
     <tags>MPQ Nmpq</tags>
   </metadata>
   <files>
-    <file src="build\Nmpq.dll" target="lib\net40\" />
-    <file src="..\LICENSE" target="lib\" />
+    <file src="build\Nmpq.dll" target="lib\net40" />
   </files>
 </package>
