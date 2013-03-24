@@ -22,6 +22,9 @@ _The_ native MPQ library that everyone uses.
 #### [MpqLib](https://github.com/Hernrup/MpqLib)
 C# bindings to StormLib. If you need to create/modify MPQ archives in a .NET language, you probably want to use this.
 
+License
+--------
+Nmpq is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
 Features
 --------
