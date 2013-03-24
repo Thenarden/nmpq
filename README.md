@@ -38,7 +38,7 @@ Features
 Limitations
 -----------
 
-I can't stress enough that __Nmpq was originally desigend with a specific use-case in mind__. I need to parse MPQ archives uploaded as part of an HTTP request without saving them to disk. Specifically, I need to parse Starcraft 2 replay files. Thus, the library has the following limitations:
+I can't stress enough that __Nmpq was originally designed with a specific use-case in mind__. I need to parse MPQ archives uploaded as part of an HTTP request without saving them to disk. Specifically, I need to parse Starcraft 2 replay files. Thus, the library has the following limitations:
 
 * Only supports archives that use Deflate and BZip2 compression.
 * Only supports reading archives; there is no support for creating or modifying archives.
