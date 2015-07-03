@@ -11,11 +11,11 @@ namespace Nmpq.Parsing
 
         [FieldOffset(0x04)] public readonly uint FilePathHashB;
 
-        [FieldOffset(0x08)] public readonly short Language;
+        [FieldOffset(0x08)] public readonly ushort Language;
 
         [FieldOffset(0x0a)] public readonly byte Platform;
 
-        [FieldOffset(0x0c)] public readonly int FileBlockIndex;
+        [FieldOffset(0x0c)] public readonly uint FileBlockIndex;
 
         private const uint EmptyMarker = 0xffffffff;
 

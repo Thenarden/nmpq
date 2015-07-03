@@ -5,9 +5,9 @@ namespace Nmpq.Parsing
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct BlockTableEntry
     {
-        public readonly int BlockOffset;
-        public readonly int BlockSize;
-        public readonly int FileSize;
+        public readonly uint BlockOffset;
+        public readonly uint BlockSize;
+        public readonly uint FileSize;
         public readonly BlockFlags Flags;
 
         public bool HasKeyAdjustedByBlockOffset

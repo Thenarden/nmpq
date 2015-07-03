@@ -68,12 +68,12 @@ namespace Nmpq
                 throw new MpqParsingException("Invalid MPQ format. Must be '1' or '3'.");
         }
 
-        private IEnumerable<T> ReadTableEntires<T>(string name, int tableOffset, int numberOfEntries)
+        private IEnumerable<T> ReadTableEntires<T>(string name, uint tableOffset, uint numberOfEntries)
         {
             SeekToArchiveOffset(tableOffset);
 
             var entrySize = Marshal.SizeOf(typeof (T));
-            var data = _reader.ReadBytes(entrySize*numberOfEntries);
+            var data = _reader.ReadBytes((int)(entrySize*numberOfEntries));
             var key = Crypto.Hash(name, HashType.TableKey);
 
             Crypto.DecryptInPlace(data, key);
@@ -102,7 +102,7 @@ namespace Nmpq
             if (entry == null)
                 return null;
 
-            return BlockTable[entry.Value.FileBlockIndex];
+            return BlockTable[(int)entry.Value.FileBlockIndex];
         }
 
         // todos: support more decompression algorithms?
@@ -137,7 +137,7 @@ namespace Nmpq
 
             if (!compressed)
             {
-                return _reader.ReadBytes(blockEntry.Value.BlockSize);
+                return _reader.ReadBytes((int)blockEntry.Value.BlockSize);
             }
 
             // first byte of each compressed block is a set of flags indicating which 
@@ -146,7 +146,7 @@ namespace Nmpq
 
             // compression flags don't count toward the data size, but does toward the block size
             var dataSize = blockEntry.Value.BlockSize - 1;
-            var blockData = _reader.ReadBytes(dataSize);
+            var blockData = _reader.ReadBytes((int)dataSize);
 
             if (compressionFlags == CompressionFlags.Bzip2)
             {
