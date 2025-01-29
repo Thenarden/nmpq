@@ -1,8 +1,8 @@
 Nmpq - A Fully-Managed C# MPQ Parser
 ==================================
+[![NuGet](https://img.shields.io/nuget/v/Nmpq.Standard.svg)](https://www.nuget.org/packages/Nmpq.Standard/)
 
-####[Nmpq is available via NuGet](https://nuget.org/packages/Nmpq/)
-####[Standalone binaries can also be found here.](https://s3.amazonaws.com/nmpq/Nmpq-binaries.zip)
+This is a fork from [Thenarden/nmpq](https://github.com/Thenarden/nmpq) that has been updated to .NET standard 2.0 for use with modern C# projects.
 
 Rationale for a new MPQ parser
 ------------------------------

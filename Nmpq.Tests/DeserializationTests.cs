@@ -1,6 +1,5 @@
-using System.IO;
-using NUnit.Framework;
 using Nmpq.Util;
+using NUnit.Framework;
 
 namespace Nmpq.Tests
 {
@@ -61,7 +60,7 @@ namespace Nmpq.Tests
             using (var archive = ObjectMother.OpenTestArchive1())
             {
                 var file = archive.ReadSerializedData("a file that doesn't exist", true);
-                Assert.Null(file);
+                Assert.That(file, Is.Null);
             }
         }
 
@@ -72,7 +71,6 @@ namespace Nmpq.Tests
         [TestCase(new byte[] {0x03}, -1)]
         [TestCase(new byte[] {0x7e}, 63)]
         [TestCase(new byte[] {0x7f}, -63)]
-        [TestCase(new byte[] {0x80}, 0, ExpectedException = typeof (EndOfStreamException))]
         [TestCase(new byte[] {0x80, 0x00}, 0)]
         [TestCase(new byte[] {0x80, 0x01}, 64)]
         [TestCase(new byte[] {0x81, 0x01}, -64)]
@@ -84,15 +82,21 @@ namespace Nmpq.Tests
         [TestCase(new byte[] {0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x10}, 4503599627370496)]
         public void Variable_length_integers_are_deserialized_correctly(byte[] bytes, long expectedValue)
         {
-            using (var stream = new MemoryStream(bytes))
-            using (var reader = new BinaryReader(stream))
-            {
-                var value = Starcraft2SerializedData.DeserializeVariableLengthInteger(reader);
-
-                Assert.That(value, Is.EqualTo(expectedValue));
-            }
+            using var stream = new MemoryStream(bytes);
+            using var reader = new BinaryReader(stream);
+            
+            var value = Starcraft2SerializedData.DeserializeVariableLengthInteger(reader);
+            Assert.That(value, Is.EqualTo(expectedValue));
         }
 
+        [TestCase(new byte[] {0x80}, 0, typeof(EndOfStreamException))]
+        public void Variable_length_integers_expected_exception(byte[] bytes, long expectedValue, Type expectedException)
+        {
+            using var stream = new MemoryStream(bytes);
+            using var reader = new BinaryReader(stream);
+            Assert.Throws(expectedException, () => Starcraft2SerializedData.DeserializeVariableLengthInteger(reader));
+        }
+        
         [Test]
         public void Unknown_data_type_causes_MpqParsingException()
         {
